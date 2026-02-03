@@ -50,10 +50,9 @@ export default function HomePage() {
             alt="Divine Hero Background"
             fill
             priority
-            className="object-cover object-center scale-105"
+            className="object-cover object-center scale-105 opacity-30"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white" />
-          <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]" />
         </div>
 
         <div className="container mx-auto px-4 relative z-10 text-center">
