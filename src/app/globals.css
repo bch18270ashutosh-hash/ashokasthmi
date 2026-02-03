@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #fff9ed;
+  --color-primary-100: #ffefd1;
+  --color-primary-200: #ffdca3;
+  --color-primary-300: #ffbf66;
+  --color-primary-400: #ff9929;
+  --color-primary-500: #f97316; /* Saffron base */
+  --color-primary-600: #ea580c;
+  --color-primary-700: #c2410c;
+  --color-primary-800: #9a3412;
+  --color-primary-900: #7c2d12;
+
+  --color-gold-50: #fdfce8;
+  --color-gold-100: #fef9c3;
+  --color-gold-200: #fef08a;
+  --color-gold-300: #fde047;
+  --color-gold-400: #facc15;
+  --color-gold-500: #eab308;
+  --color-gold-600: #ca8a04;
+  --color-gold-700: #a16207;
+
+  --font-display: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: var(--color-primary-500);
+  --gold: var(--color-gold-500);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f172a;
+    --foreground: #f8fafc;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+}
+
+.bg-spiritual {
+  background: linear-gradient(135deg, var(--color-primary-50) 0%, #ffffff 100%);
+}
+
+.text-gradient-saffron {
+  background: linear-gradient(to right, var(--color-primary-600), var(--color-gold-600));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
