@@ -17,10 +17,20 @@ export default function ProductDetailsPage() {
     const [product, setProduct] = React.useState<any>(null);
     const [relatedProducts, setRelatedProducts] = React.useState<any[]>([]);
     const [loading, setLoading] = React.useState(true);
+    const [selectedVariant, setSelectedVariant] = React.useState<any>(null);
+    const [quantity, setQuantity] = React.useState(1);
 
     React.useEffect(() => {
         if (id) fetchProductDetails();
     }, [id]);
+
+    React.useEffect(() => {
+        if (product && Array.isArray(product.variants) && product.variants.length > 0) {
+            setSelectedVariant(product.variants[0]);
+        } else {
+            setSelectedVariant(null);
+        }
+    }, [product]);
 
     const fetchProductDetails = async () => {
         setLoading(true);
@@ -56,17 +66,6 @@ export default function ProductDetailsPage() {
             </div>
         );
     }
-
-    const [selectedVariant, setSelectedVariant] = React.useState<any>(null);
-    const [quantity, setQuantity] = React.useState(1);
-
-    React.useEffect(() => {
-        if (product && Array.isArray(product.variants) && product.variants.length > 0) {
-            setSelectedVariant(product.variants[0]);
-        } else {
-            setSelectedVariant(null);
-        }
-    }, [product]);
 
     // Defensive calculations
     const currentPrice = Number(selectedVariant?.price || product.price || 0);
