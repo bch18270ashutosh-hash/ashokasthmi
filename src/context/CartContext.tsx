@@ -23,7 +23,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const savedCart = localStorage.getItem("ashok_asthmi_cart");
         if (savedCart) {
             try {
-                setCart(JSON.parse(savedCart));
+                const parsed = JSON.parse(savedCart);
+                if (Array.isArray(parsed)) {
+                    // Filter out any corrupted or null items
+                    const validCart = parsed.filter(item => item && typeof item === 'object' && item.id);
+                    setCart(validCart);
+                }
             } catch (e) {
                 console.error("Failed to load cart", e);
             }
@@ -88,8 +93,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const clearCart = () => setCart([]);
 
-    const cartTotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+    const cartTotal = cart.reduce((acc, item) => acc + (Number(item.price || 0) * Number(item.quantity || 0)), 0);
+    const cartCount = cart.reduce((acc, item) => acc + Number(item.quantity || 0), 0);
 
     return (
         <CartContext.Provider
