@@ -70,6 +70,13 @@ export default function AdminDashboard() {
                 .from('product-images')
                 .upload(filePath, imageFile);
 
+            if (uploadError) {
+                console.error("Upload Error:", uploadError);
+                alert("Failed to upload image. Please try again.");
+                setIsSaving(false);
+                return;
+            }
+
             if (!uploadError) {
                 const { data: { publicUrl } } = supabase.storage
                     .from('product-images')

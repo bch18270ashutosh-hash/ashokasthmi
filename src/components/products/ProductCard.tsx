@@ -62,7 +62,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 <div className="mt-auto flex items-center justify-between gap-2">
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight leading-none mb-1">
-                            {product.variants && product.variants.length > 0 ? "From" : "Price"}
+                            {product.variants && Array.isArray(product.variants) && product.variants.length > 0 ? "From" : "Price"}
                         </span>
                         <span className="text-lg font-bold text-slate-900 leading-none">₹{product.price}</span>
                         {product.mrp > product.price && (

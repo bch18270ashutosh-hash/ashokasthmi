@@ -129,7 +129,7 @@ export default function ProductDetailsPage() {
                     </p>
 
                     {/* Variant Selection */}
-                    {product.variants?.length > 0 && (
+                    {product.variants && Array.isArray(product.variants) && product.variants.length > 0 && (
                         <div className="flex flex-col gap-3">
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Size</label>
                             <div className="flex flex-wrap gap-2">
@@ -138,8 +138,8 @@ export default function ProductDetailsPage() {
                                         key={v.id}
                                         onClick={() => setSelectedVariant(v)}
                                         className={`px-6 py-3 rounded-xl text-sm font-bold transition-all border-2 ${selectedVariant?.id === v.id
-                                                ? "border-primary-500 bg-primary-500 text-white shadow-lg shadow-primary-200"
-                                                : "border-slate-100 bg-slate-50 text-slate-600 hover:border-primary-200"
+                                            ? "border-primary-500 bg-primary-500 text-white shadow-lg shadow-primary-200"
+                                            : "border-slate-100 bg-slate-50 text-slate-600 hover:border-primary-200"
                                             }`}
                                     >
                                         {v.name}
