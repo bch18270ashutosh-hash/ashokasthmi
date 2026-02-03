@@ -1,27 +1,44 @@
 "use client";
 
-import React, { useState, useMemo, Suspense } from "react";
+import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import productsData from "@/data/products.json";
+import { supabase } from "@/lib/supabase";
 import ProductCard from "@/components/products/ProductCard";
-import { Search, SlidersHorizontal, ChevronDown, LayoutGrid, List } from "lucide-react";
+import { Search, SlidersHorizontal, ChevronDown, LayoutGrid, List, Loader2 } from "lucide-react";
 
 function ShopContent() {
     const searchParams = useSearchParams();
     const categoryParam = searchParams.get("category");
 
+    const [products, setProducts] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState(categoryParam || "All");
     const [sortBy, setSortBy] = useState("newest");
     const [priceRange, setPriceRange] = useState(5000);
 
-    const categories = ["All", ...Array.from(new Set(productsData.map(p => p.category)))];
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    const fetchProducts = async () => {
+        setLoading(true);
+        const { data, error } = await supabase
+            .from("products")
+            .select("*")
+            .order("created_at", { ascending: false });
+
+        if (!error && data) setProducts(data);
+        setLoading(false);
+    };
+
+    const categories = ["All", ...Array.from(new Set(products.map(p => p.category)))];
 
     const filteredProducts = useMemo(() => {
-        return productsData
+        return products
             .filter(p => {
                 const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    p.description.toLowerCase().includes(searchQuery.toLowerCase());
+                    (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()));
                 const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
                 const matchesPrice = p.price <= priceRange;
                 return matchesSearch && matchesCategory && matchesPrice;
@@ -29,10 +46,10 @@ function ShopContent() {
             .sort((a, b) => {
                 if (sortBy === "price-low") return a.price - b.price;
                 if (sortBy === "price-high") return b.price - a.price;
-                if (sortBy === "popularity") return b.stock - a.stock; // Mock popularity
-                return Number(b.id) - Number(a.id); // Newest
+                if (sortBy === "popularity") return b.stock - a.stock;
+                return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
             });
-    }, [searchQuery, selectedCategory, priceRange, sortBy]);
+    }, [products, searchQuery, selectedCategory, priceRange, sortBy]);
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -69,8 +86,8 @@ function ShopContent() {
                                     key={cat}
                                     onClick={() => setSelectedCategory(cat)}
                                     className={`px-4 py-2 rounded-xl text-sm transition-all text-left ${selectedCategory === cat
-                                            ? "bg-primary-500 text-white font-bold shadow-md shadow-primary-200"
-                                            : "bg-white text-slate-600 hover:bg-primary-50 border border-slate-100"
+                                        ? "bg-primary-500 text-white font-bold shadow-md shadow-primary-200"
+                                        : "bg-white text-slate-600 hover:bg-primary-50 border border-slate-100"
                                         }`}
                                 >
                                     {cat}
@@ -133,10 +150,15 @@ function ShopContent() {
                     </div>
 
                     {/* Grid */}
-                    {filteredProducts.length > 0 ? (
+                    {loading ? (
+                        <div className="h-96 flex flex-col items-center justify-center gap-4 text-slate-400">
+                            <Loader2 className="animate-spin text-primary-500" size={40} />
+                            <p>Fetching divine items...</p>
+                        </div>
+                    ) : filteredProducts.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredProducts.map(product => (
-                                <ProductCard key={product.id} product={product as any} />
+                                <ProductCard key={product.id} product={product} />
                             ))}
                         </div>
                     ) : (

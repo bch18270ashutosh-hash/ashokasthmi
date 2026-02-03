@@ -3,9 +3,9 @@
 import React from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import productsData from "@/data/products.json";
+import { supabase } from "@/lib/supabase";
 import { useCart } from "@/context/CartContext";
-import { ShoppingCart, ArrowLeft, ShieldCheck, Truck, RefreshCw, Star, Share2 } from "lucide-react";
+import { ShoppingCart, ArrowLeft, ShieldCheck, Truck, RefreshCw, Star, Share2, Loader2 } from "lucide-react";
 import ProductCard from "@/components/products/ProductCard";
 
 export default function ProductDetailsPage() {
@@ -13,22 +13,48 @@ export default function ProductDetailsPage() {
     const router = useRouter();
     const { addToCart } = useCart();
 
-    const product = productsData.find(p => p.id === id);
+    const [product, setProduct] = React.useState<any>(null);
+    const [relatedProducts, setRelatedProducts] = React.useState<any[]>([]);
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        if (id) fetchProductDetails();
+    }, [id]);
+
+    const fetchProductDetails = async () => {
+        setLoading(true);
+        const { data, error } = await supabase
+            .from("products")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+        if (!error && data) {
+            setProduct(data);
+            // Fetch related products
+            const { data: related } = await supabase
+                .from("products")
+                .select("*")
+                .eq("category", data.category)
+                .neq("id", data.id)
+                .limit(4);
+            if (related) setRelatedProducts(related);
+        }
+        setLoading(false);
+    };
+
+    if (loading) return <div className="h-screen flex flex-col items-center justify-center gap-4"><Loader2 className="animate-spin text-primary-500" size={48} /><p className="text-slate-400 font-display">Whispering a prayer for your product...</p></div>;
 
     if (!product) {
         return (
             <div className="container mx-auto px-4 py-20 text-center">
-                <h1 className="text-2xl font-bold mb-4">Product not found</h1>
+                <h1 className="text-2xl font-bold mb-4">Divine item not found</h1>
                 <button onClick={() => router.push("/shop")} className="text-primary-600 font-bold underline">
                     Back to Shop
                 </button>
             </div>
         );
     }
-
-    const relatedProducts = productsData
-        .filter(p => p.category === product.category && p.id !== product.id)
-        .slice(0, 4);
 
     const discount = Math.round(((product.mrp - product.price) / product.mrp) * 100);
 

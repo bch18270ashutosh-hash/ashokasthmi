@@ -1,15 +1,33 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import productsData from "@/data/products.json";
+import { supabase } from "@/lib/supabase";
 import ProductCard from "@/components/products/ProductCard";
-import { ArrowRight, Sparkles, ShieldCheck, Truck, Zap } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, Truck, Zap, Loader2 } from "lucide-react";
 
 export default function HomePage() {
-  const featuredProducts = productsData.slice(0, 8);
-  const categories = Array.from(new Set(productsData.map(p => p.category))).slice(0, 6);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(8);
+
+    if (!error && data) setProducts(data);
+    setLoading(false);
+  };
+
+  const featuredProducts = products;
+  const categories = Array.from(new Set(products.map(p => p.category))).slice(0, 6);
 
   return (
     <div className="flex flex-col gap-16 pb-16">
@@ -129,8 +147,10 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product as any} />
+          {loading ? (
+            <div className="col-span-full h-40 flex items-center justify-center"><Loader2 className="animate-spin text-primary-500" /></div>
+          ) : featuredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </section>
