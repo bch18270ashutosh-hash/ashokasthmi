@@ -24,9 +24,13 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-slate-800">Visit Us</h3>
-                                    <p className="text-slate-500 text-sm leading-relaxed">
-                                        123 Spiritual Avenue, Moksh Marg,<br />Varanasi, UP - 221001, India
-                                    </p>
+                                    <Link
+                                        href="https://maps.app.goo.gl/kDzHnrwypBwXydK76"
+                                        target="_blank"
+                                        className="text-slate-500 text-sm leading-relaxed hover:text-primary-600 transition-colors"
+                                    >
+                                        Shop S 10, Jugved Complex, Gejha Rd, bhangel, Goyal Colony, Noida, UP - 201304
+                                    </Link>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -35,8 +39,8 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-slate-800">Call Us</h3>
-                                    <p className="text-slate-500 text-sm">+91 98765 43210</p>
-                                    <p className="text-slate-400 text-xs">Mon - Sat: 9:00 AM - 7:00 PM</p>
+                                    <p className="text-slate-500 text-sm">+91 8882522738</p>
+                                    <p className="text-slate-400 text-xs">Mon - Sat: 9:00 AM - 9:00 PM</p>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -45,7 +49,7 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-slate-800">Email Us</h3>
-                                    <p className="text-slate-500 text-sm">care@ashokasthmi.in</p>
+                                    <p className="text-slate-500 text-sm">mycare@ashokasthmi.in</p>
                                     <p className="text-slate-400 text-xs">Expected response within 24h</p>
                                 </div>
                             </div>
@@ -57,7 +61,7 @@ export default function ContactPage() {
                                 Get instant replies for your queries on stock availability and bulk pricing.
                             </p>
                             <Link
-                                href="https://wa.me/+910000000000"
+                                href="https://wa.me/+918882522738"
                                 className="px-6 py-3 bg-white text-primary-600 rounded-xl font-bold inline-flex items-center gap-2 hover:bg-slate-50 transition-all"
                             >
                                 Chat Now <Send size={18} />

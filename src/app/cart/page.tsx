@@ -32,7 +32,7 @@ export default function CartPage() {
 
         const message = `*New Order from Ashok Asthmi*\n\n*Items:*\n${cartSummary}\n\n*Total:* ₹${cartTotal}\n\n*Customer Details:*\nName: ${formData.name}\nPhone: ${formData.phone}\nAddress: ${formData.address}, ${formData.city} - ${formData.pincode}`;
 
-        const whatsappUrl = `https://wa.me/+910000000000?text=${encodeURIComponent(message)}`;
+        const whatsappUrl = `https://wa.me/+918882522738?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, "_blank");
     };
 

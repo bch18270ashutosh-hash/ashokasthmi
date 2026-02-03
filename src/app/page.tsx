@@ -157,7 +157,7 @@ export default function HomePage() {
               Connect with us on WhatsApp for personalized assistance and special festive offers.
             </p>
             <Link
-              href="https://wa.me/+910000000000"
+              href="https://wa.me/+918882522738"
               className="px-10 py-5 bg-green-500 text-white rounded-2xl font-bold flex items-center gap-3 hover:bg-green-600 transition-all shadow-2xl shadow-green-900/20 active:scale-95"
             >
               Contact on WhatsApp

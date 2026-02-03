@@ -58,15 +58,21 @@ export default function Footer() {
                         <ul className="flex flex-col gap-4 text-sm text-slate-400">
                             <li className="flex items-start gap-3">
                                 <MapPin size={20} className="text-primary-500 shrink-0" />
-                                <span>123 Spiritual Avenue, Moksh Marg,<br />Varanasi, UP - 221001</span>
+                                <Link
+                                    href="https://maps.app.goo.gl/kDzHnrwypBwXydK76"
+                                    target="_blank"
+                                    className="hover:text-primary-400 transition-colors"
+                                >
+                                    Shop S 10, Jugved Complex, Noida, UP - 201304
+                                </Link>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Phone size={20} className="text-primary-500 shrink-0" />
-                                <span>+91 98765 43210</span>
+                                <Link href="tel:+918882522738" className="hover:text-primary-400 transition-colors">+91 8882522738</Link>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Mail size={20} className="text-primary-500 shrink-0" />
-                                <span>care@ashokasthmi.in</span>
+                                <Link href="mailto:mycare@ashokasthmi.in" className="hover:text-primary-400 transition-colors">mycare@ashokasthmi.in</Link>
                             </li>
                         </ul>
                     </div>

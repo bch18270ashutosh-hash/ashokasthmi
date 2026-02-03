@@ -33,7 +33,7 @@ export default function PrivacyPolicy() {
                 </p>
 
                 <h2 className="text-xl font-bold mt-8 mb-4">5. Contact Us</h2>
-                <p>If you have any questions about this Privacy Policy, please contact us at care@ashokasthmi.in.</p>
+                <p>If you have any questions about this Privacy Policy, please contact us at mycare@ashokasthmi.in.</p>
             </div>
         </div>
     );

@@ -31,7 +31,7 @@ export default function TermsPage() {
                 </p>
 
                 <h2 className="text-xl font-bold mt-8 mb-4">5. Governing Law</h2>
-                <p>These terms are governed by the laws of India and subject to the jurisdiction of Varanasi, UP.</p>
+                <p>These terms are governed by the laws of India and subject to the jurisdiction of Noida, Uttar Pradesh.</p>
             </div>
         </div>
     );

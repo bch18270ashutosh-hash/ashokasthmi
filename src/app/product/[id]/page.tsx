@@ -114,7 +114,7 @@ export default function ProductDetailsPage() {
                             Add to Cart
                         </button>
                         <button
-                            onClick={() => window.open(`https://wa.me/+910000000000?text=Hi, I want to order ${product.name}`, "_blank")}
+                            onClick={() => window.open(`https://wa.me/+918882522738?text=Hi, I want to order ${product.name}`, "_blank")}
                             className="flex-1 px-8 py-5 bg-green-500 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-green-600 transition-all shadow-xl shadow-green-200 active:scale-95"
                         >
                             Order on WhatsApp
