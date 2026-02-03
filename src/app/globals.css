@@ -6,7 +6,8 @@
   --color-primary-200: #ffdca3;
   --color-primary-300: #ffbf66;
   --color-primary-400: #ff9929;
-  --color-primary-500: #f97316; /* Saffron base */
+  --color-primary-500: #f97316;
+  /* Saffron base */
   --color-primary-600: #ea580c;
   --color-primary-700: #c2410c;
   --color-primary-800: #9a3412;
@@ -39,14 +40,27 @@
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-h1, h2, h3, h4, .font-display {
-  font-family: var(--font-display);
+  body {
+    @apply antialiased overflow-x-hidden;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Improve tap targets for Android */
+  button,
+  a,
+  input,
+  select {
+    @apply min-h-[44px] md:min-h-[unset];
+  }
 }
 
 .bg-spiritual {
@@ -57,4 +71,24 @@ h1, h2, h3, h4, .font-display {
   background: linear-gradient(to right, var(--color-primary-600), var(--color-gold-600));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Modal helper for mobile */
+.modal-scroll-lock {
+  overflow: hidden !important;
+  position: fixed;
+  width: 100%;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full hover:bg-slate-300 transition-colors;
 }
