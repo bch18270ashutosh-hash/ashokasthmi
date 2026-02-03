@@ -14,7 +14,9 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
     const { addToCart } = useCart();
 
-    const discount = Math.round(((product.mrp - product.price) / product.mrp) * 100);
+    const safePrice = Number(product.price || 0);
+    const safeMrp = Number(product.mrp || safePrice || 0);
+    const discount = safeMrp > 0 ? Math.max(0, Math.round(((safeMrp - safePrice) / safeMrp) * 100)) : 0;
 
     return (
         <div className="group bg-white rounded-2xl border border-primary-50 overflow-hidden hover:shadow-xl hover:shadow-primary-100/50 transition-all duration-300 flex flex-col">

@@ -9,7 +9,8 @@ import { ShoppingCart, ArrowLeft, ShieldCheck, Truck, RefreshCw, Star, Share2, L
 import ProductCard from "@/components/products/ProductCard";
 
 export default function ProductDetailsPage() {
-    const { id } = useParams();
+    const params = useParams();
+    const id = params?.id as string;
     const router = useRouter();
     const { addToCart } = useCart();
 
@@ -60,15 +61,22 @@ export default function ProductDetailsPage() {
     const [quantity, setQuantity] = React.useState(1);
 
     React.useEffect(() => {
-        if (product && product.variants?.length > 0) {
+        if (product && Array.isArray(product.variants) && product.variants.length > 0) {
             setSelectedVariant(product.variants[0]);
+        } else {
+            setSelectedVariant(null);
         }
     }, [product]);
 
-    const currentPrice = selectedVariant?.price || product.price;
-    const currentMrp = selectedVariant?.mrp || product.mrp;
-    const currentImage = (selectedVariant?.image && selectedVariant.image.length > 0) ? selectedVariant.image : product.image;
-    const discount = Math.round(((currentMrp - currentPrice) / currentMrp) * 100);
+    // Defensive calculations
+    const currentPrice = Number(selectedVariant?.price || product.price || 0);
+    const currentMrp = Number(selectedVariant?.mrp || product.mrp || currentPrice || 0);
+    const productMainImage = product.image || "https://placehold.co/600x600/FFF9ED/F97316?text=Image+Coming+Soon";
+    const variantImage = (selectedVariant?.image && selectedVariant.image.length > 0) ? selectedVariant.image : null;
+    const currentImage = variantImage || productMainImage;
+
+    // Safety check for discount calculation
+    const discount = currentMrp > 0 ? Math.max(0, Math.round(((currentMrp - currentPrice) / currentMrp) * 100)) : 0;
 
     return (
         <div className="container mx-auto px-4 py-12">
