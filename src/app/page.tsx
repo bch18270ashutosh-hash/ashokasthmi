@@ -46,7 +46,7 @@ export default function HomePage() {
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 -z-10">
           <Image
-            src="/images/hero-bg.jpg"
+            src="/images/hero-bg.png"
             alt="Divine Hero Background"
             fill
             priority
