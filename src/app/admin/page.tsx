@@ -9,16 +9,28 @@ import Image from "next/image";
 export default function AdminDashboard() {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
     const [products, setProducts] = useState<any[]>([]);
+    const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("products");
     const [showModal, setShowModal] = useState(false);
+    const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [currentProduct, setCurrentProduct] = useState<any>(null);
+    const [currentCategory, setCurrentCategory] = useState<any>(null);
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         checkUser();
         fetchProducts();
+        fetchCategories();
     }, []);
+
+    const fetchCategories = async () => {
+        const { data, error } = await supabase
+            .from("categories")
+            .select("*")
+            .order("name", { ascending: true });
+        if (!error && data) setCategories(data);
+    };
 
     const checkUser = async () => {
         const { data: { session } } = await supabase.auth.getSession();
@@ -116,6 +128,35 @@ export default function AdminDashboard() {
         }
     };
 
+    const handleSaveCategory = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSaving(true);
+        const formData = new FormData(e.currentTarget as HTMLFormElement);
+
+        const categoryData = {
+            name: formData.get("name"),
+            image_url: formData.get("image_url"),
+        };
+
+        if (currentCategory) {
+            await supabase.from("categories").update(categoryData).eq("id", currentCategory.id);
+        } else {
+            await supabase.from("categories").insert([categoryData]);
+        }
+
+        setShowCategoryModal(false);
+        setCurrentCategory(null);
+        fetchCategories();
+        setIsSaving(false);
+    };
+
+    const handleDeleteCategory = async (id: string) => {
+        if (confirm("Are you sure you want to delete this category? This will not delete products in this category.")) {
+            await supabase.from("categories").delete().eq("id", id);
+            fetchCategories();
+        }
+    };
+
     if (isAuthenticated === null) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-primary-500" /></div>;
     if (!isAuthenticated) return <AdminLogin onLogin={() => setIsAuthenticated(true)} />;
 
@@ -130,6 +171,7 @@ export default function AdminDashboard() {
                     {[
                         { id: "overview", icon: LayoutDashboard, label: "Overview" },
                         { id: "products", icon: Package, label: "Products" },
+                        { id: "categories", icon: LayoutDashboard, label: "Categories" },
                         { id: "orders", icon: BarChart3, label: "Orders" },
                         { id: "customers", icon: Users, label: "Customers" },
                     ].map((item) => (
@@ -167,6 +209,14 @@ export default function AdminDashboard() {
                             className="flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-xl font-bold shadow-lg shadow-primary-200 hover:bg-primary-600 transition-all"
                         >
                             <Plus size={18} /> Add New Product
+                        </button>
+                    )}
+                    {activeTab === "categories" && (
+                        <button
+                            onClick={() => { setCurrentCategory(null); setShowCategoryModal(true); }}
+                            className="flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-xl font-bold shadow-lg shadow-primary-200 hover:bg-primary-600 transition-all"
+                        >
+                            <Plus size={18} /> Add New Category
                         </button>
                     )}
                 </header>
@@ -273,6 +323,48 @@ export default function AdminDashboard() {
                             </div>
                         </div>
                     </>
+                ) : activeTab === "categories" ? (
+                    <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="bg-slate-50/50 text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                                        <th className="px-6 py-4">Category</th>
+                                        <th className="px-6 py-4">ID</th>
+                                        <th className="px-6 py-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-50">
+                                    {categories.length === 0 ? (
+                                        <tr><td colSpan={3} className="p-10 text-center text-slate-400">No categories found. Add one to get started!</td></tr>
+                                    ) : categories.map((cat) => (
+                                        <tr key={cat.id} className="hover:bg-slate-50/30 transition-colors">
+                                            <td className="px-6 py-4">
+                                                <span className="text-sm font-bold text-slate-800">{cat.name}</span>
+                                            </td>
+                                            <td className="px-6 py-4 text-xs text-slate-400">{cat.id}</td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => { setCurrentCategory(cat); setShowCategoryModal(true); }}
+                                                        className="p-2 text-slate-400 hover:text-primary-600 transition-colors"
+                                                    >
+                                                        <Edit size={16} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteCategory(cat.id)}
+                                                        className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 ) : (
                     <div className="flex flex-col items-center justify-center p-20 bg-white rounded-[3rem] border border-slate-100 text-center">
                         <BarChart3 size={48} className="text-slate-200 mb-4" />
@@ -308,13 +400,17 @@ export default function AdminDashboard() {
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Category</label>
-                                    <input
+                                    <select
                                         name="category"
                                         defaultValue={currentProduct?.category}
                                         required
                                         className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-primary-100"
-                                        placeholder="e.g. Holy Water"
-                                    />
+                                    >
+                                        <option value="">Select a category</option>
+                                        {categories.map((cat) => (
+                                            <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">MRP (₹)</label>
@@ -490,6 +586,49 @@ export default function AdminDashboard() {
                                 className="w-full py-5 bg-primary-500 text-white rounded-[2rem] font-bold shadow-xl shadow-primary-200 hover:bg-primary-600 transition-all flex items-center justify-center gap-2"
                             >
                                 {isSaving ? <Loader2 className="animate-spin" /> : currentProduct ? "Update Product" : "Save Product"}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
+            {/* Category Modal */}
+            {showCategoryModal && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white w-full max-w-md rounded-[3rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="p-8 border-b border-slate-50 flex justify-between items-center">
+                            <h2 className="text-2xl font-display font-bold text-slate-900">
+                                {currentCategory ? "Edit Category" : "Add New Category"}
+                            </h2>
+                            <button onClick={() => setShowCategoryModal(false)} className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
+                                <X size={24} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSaveCategory} className="p-8 flex flex-col gap-6">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-bold text-slate-500 uppercase">Category Name</label>
+                                <input
+                                    name="name"
+                                    defaultValue={currentCategory?.name}
+                                    required
+                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-primary-100"
+                                    placeholder="e.g. Premium Agarbatti"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-bold text-slate-500 uppercase">Display Image (URL)</label>
+                                <input
+                                    name="image_url"
+                                    defaultValue={currentCategory?.image_url}
+                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-primary-100"
+                                    placeholder="Paste image URL here..."
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={isSaving}
+                                className="w-full py-5 bg-primary-500 text-white rounded-[2rem] font-bold shadow-xl shadow-primary-200 hover:bg-primary-600 transition-all flex items-center justify-center gap-2"
+                            >
+                                {isSaving ? <Loader2 className="animate-spin" /> : currentCategory ? "Update Category" : "Save Category"}
                             </button>
                         </form>
                     </div>

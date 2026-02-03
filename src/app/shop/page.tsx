@@ -11,6 +11,7 @@ function ShopContent() {
     const categoryParam = searchParams.get("category");
 
     const [products, setProducts] = useState<any[]>([]);
+    const [dbCategories, setDbCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState(categoryParam || "All");
@@ -18,21 +19,29 @@ function ShopContent() {
     const [priceRange, setPriceRange] = useState(5000);
 
     useEffect(() => {
-        fetchProducts();
+        fetchData();
     }, []);
 
-    const fetchProducts = async () => {
+    const fetchData = async () => {
         setLoading(true);
-        const { data, error } = await supabase
+        // Fetch products
+        const { data: prodData } = await supabase
             .from("products")
             .select("*")
             .order("created_at", { ascending: false });
+        if (prodData) setProducts(prodData);
 
-        if (!error && data) setProducts(data);
+        // Fetch categories
+        const { data: catData } = await supabase
+            .from("categories")
+            .select("*")
+            .order("name", { ascending: true });
+        if (catData) setDbCategories(catData);
+
         setLoading(false);
     };
 
-    const categories = ["All", ...Array.from(new Set(products.map(p => p.category)))];
+    const categories = ["All", ...dbCategories.map(c => c.name)];
 
     const filteredProducts = useMemo(() => {
         return products

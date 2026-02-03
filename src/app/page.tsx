@@ -9,76 +9,93 @@ import { ArrowRight, Sparkles, ShieldCheck, Truck, Zap, Loader2 } from "lucide-r
 
 export default function HomePage() {
   const [products, setProducts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProducts();
+    fetchData();
   }, []);
 
-  const fetchProducts = async () => {
-    const { data, error } = await supabase
+  const fetchData = async () => {
+    setLoading(true);
+
+    // Fetch categories
+    const { data: catData } = await supabase
+      .from("categories")
+      .select("*")
+      .order("name", { ascending: true });
+    if (catData) setCategories(catData);
+
+    // Fetch products
+    const { data: prodData, error } = await supabase
       .from("products")
       .select("*")
       .order("created_at", { ascending: false })
       .limit(8);
 
-    if (!error && data) setProducts(data);
+    if (!error && prodData) setProducts(prodData);
     setLoading(false);
   };
 
   const featuredProducts = products;
-  const categories = Array.from(new Set(products.map(p => p.category))).slice(0, 6);
 
   return (
     <div className="flex flex-col gap-16 pb-16">
       {/* Hero Section */}
-      <section className="relative h-[85vh] min-h-[600px] w-full flex items-center overflow-hidden">
-        {/* Background Gradients */}
-        <div className="absolute inset-0 bg-primary-50/50 -z-10" />
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary-100/50 to-transparent -z-10" />
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-gold-200/20 rounded-full blur-3xl -z-10" />
+      <section className="relative h-[90vh] min-h-[700px] w-full flex items-center justify-center overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 -z-10">
+          <Image
+            src="/images/hero-bg.jpg"
+            alt="Divine Hero Background"
+            fill
+            priority
+            className="object-cover object-center scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white" />
+          <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]" />
+        </div>
 
-        <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
-          <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-left duration-1000">
-            <div className="flex items-center gap-2 text-primary-600 font-bold tracking-widest text-xs uppercase">
-              <Sparkles size={16} />
-              <span>Divine purity in every item</span>
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <div className="flex flex-col items-center gap-8 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom duration-1000">
+            <div className="flex items-center gap-3 text-primary-600 font-bold tracking-[0.3em] text-sm uppercase bg-white/50 backdrop-blur-md px-6 py-2 rounded-full border border-primary-100/50 shadow-sm">
+              <Sparkles size={18} className="animate-pulse" />
+              <span>Divine Purity in Every Item</span>
             </div>
-            <h1 className="text-5xl lg:text-7xl font-display font-bold text-slate-900 leading-[1.1]">
-              Elevate Your <span className="text-gradient-saffron">Spiritual Journey</span>
+
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-display font-bold text-slate-900 leading-[1] drop-shadow-sm">
+              Elevate Your <br />
+              <span className="text-gradient-saffron relative">
+                Spiritual Journey
+                <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary-500 to-transparent opacity-50" />
+              </span>
             </h1>
-            <p className="text-lg text-slate-600 max-w-lg leading-relaxed">
+
+            <p className="text-xl md:text-2xl text-slate-700 max-w-2xl leading-relaxed font-medium">
               Discover authentic, premium-quality puja essentials for your daily rituals and festive celebrations. Sourced with devotion for your sacred space.
             </p>
-            <div className="flex flex-wrap gap-4 mt-4">
+
+            <div className="flex flex-wrap items-center justify-center gap-6 mt-4">
               <Link
                 href="/shop"
-                className="px-8 py-4 bg-primary-500 text-white rounded-2xl font-bold flex items-center gap-2 hover:bg-primary-600 transition-all shadow-xl shadow-primary-200 active:scale-95"
+                className="px-10 py-5 bg-primary-500 text-white rounded-2xl font-bold text-lg flex items-center gap-3 hover:bg-primary-600 hover:scale-105 hover:shadow-2xl hover:shadow-primary-200 transition-all active:scale-95 group"
               >
-                Shop Now <ArrowRight size={20} />
+                Shop Now
+                <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="/categories"
-                className="px-8 py-4 bg-white text-primary-600 border border-primary-100 rounded-2xl font-bold hover:bg-primary-50 transition-all active:scale-95"
+                className="px-10 py-5 bg-white/80 backdrop-blur-md text-primary-600 border border-primary-200 rounded-2xl font-bold text-lg hover:bg-white hover:scale-105 transition-all shadow-lg active:scale-95"
               >
                 Browse Categories
               </Link>
             </div>
           </div>
-
-          <div className="relative aspect-square lg:aspect-auto h-full min-h-[400px] animate-in fade-in zoom-in duration-1000 delay-200">
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary-200/20 to-gold-200/20 rounded-[4rem] rotate-3" />
-            <div className="relative h-full w-full rounded-[4rem] overflow-hidden border-8 border-white shadow-2xl">
-              <Image
-                src="https://placehold.co/800x1000/FFF9ED/F97316?text=Sacred+Puja+Set"
-                alt="Sacred Puja Set"
-                fill
-                priority
-                className="object-cover"
-              />
-            </div>
-          </div>
         </div>
+
+        {/* Floating Elements Decoration */}
+        <div className="absolute bottom-10 left-10 w-32 h-32 bg-gold-200/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-20 right-10 w-48 h-48 bg-primary-200/20 rounded-full blur-3xl animate-pulse delay-700" />
       </section>
 
       {/* Features */}
@@ -113,25 +130,30 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-          {categories.map((cat, i) => (
+          {categories.slice(0, 6).map((cat, i) => (
             <Link
-              key={i}
-              href={`/shop?category=${encodeURIComponent(cat)}`}
+              key={cat.id || i}
+              href={`/shop?category=${encodeURIComponent(cat.name)}`}
               className="group flex flex-col items-center gap-4"
             >
               <div className="relative aspect-square w-full rounded-full overflow-hidden bg-primary-50 border-2 border-transparent group-hover:border-primary-500 group-hover:shadow-lg transition-all duration-300">
                 <Image
-                  src={`https://placehold.co/200x200/FFF9ED/F97316?text=${cat.split(' ')[0]}`}
-                  alt={cat}
+                  src={cat.image_url || `https://placehold.co/200x200/FFF9ED/F97316?text=${cat.name.split(' ')[0]}`}
+                  alt={cat.name}
                   fill
                   className="object-contain p-6 grayscale group-hover:grayscale-0 transition-all duration-500"
                 />
               </div>
               <span className="text-sm font-semibold text-slate-700 group-hover:text-primary-600 text-center transition-colors">
-                {cat}
+                {cat.name}
               </span>
             </Link>
           ))}
+          {categories.length === 0 && !loading && (
+            <div className="col-span-full py-10 text-center text-slate-400 font-medium">
+              No categories found. Add some in Admin!
+            </div>
+          )}
         </div>
       </section>
 
