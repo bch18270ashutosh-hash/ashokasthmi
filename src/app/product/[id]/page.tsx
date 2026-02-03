@@ -56,7 +56,19 @@ export default function ProductDetailsPage() {
         );
     }
 
-    const discount = Math.round(((product.mrp - product.price) / product.mrp) * 100);
+    const [selectedVariant, setSelectedVariant] = React.useState<any>(null);
+    const [quantity, setQuantity] = React.useState(1);
+
+    React.useEffect(() => {
+        if (product && product.variants?.length > 0) {
+            setSelectedVariant(product.variants[0]);
+        }
+    }, [product]);
+
+    const currentPrice = selectedVariant?.price || product.price;
+    const currentMrp = selectedVariant?.mrp || product.mrp;
+    const currentImage = (selectedVariant?.image && selectedVariant.image.length > 0) ? selectedVariant.image : product.image;
+    const discount = Math.round(((currentMrp - currentPrice) / currentMrp) * 100);
 
     return (
         <div className="container mx-auto px-4 py-12">
@@ -73,7 +85,7 @@ export default function ProductDetailsPage() {
                 {/* Product Image */}
                 <div className="relative aspect-square rounded-[3rem] overflow-hidden bg-white border border-primary-50 shadow-xl shadow-primary-50/50">
                     <Image
-                        src={product.image}
+                        src={currentImage}
                         alt={product.name}
                         fill
                         className="object-contain p-12 hover:scale-105 transition-transform duration-700"
@@ -106,15 +118,58 @@ export default function ProductDetailsPage() {
                     </div>
 
                     <div className="flex items-baseline gap-4 py-4 border-y border-slate-100">
-                        <span className="text-5xl font-bold text-slate-900">₹{product.price}</span>
-                        {product.mrp > product.price && (
-                            <span className="text-xl text-slate-400 line-through font-medium">MRP: ₹{product.mrp}</span>
+                        <span className="text-5xl font-bold text-slate-900">₹{currentPrice}</span>
+                        {currentMrp > currentPrice && (
+                            <span className="text-xl text-slate-400 line-through font-medium">MRP: ₹{currentMrp}</span>
                         )}
                     </div>
 
                     <p className="text-lg text-slate-600 leading-relaxed">
                         {product.description}
                     </p>
+
+                    {/* Variant Selection */}
+                    {product.variants?.length > 0 && (
+                        <div className="flex flex-col gap-3">
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Size</label>
+                            <div className="flex flex-wrap gap-2">
+                                {product.variants.map((v: any) => (
+                                    <button
+                                        key={v.id}
+                                        onClick={() => setSelectedVariant(v)}
+                                        className={`px-6 py-3 rounded-xl text-sm font-bold transition-all border-2 ${selectedVariant?.id === v.id
+                                                ? "border-primary-500 bg-primary-500 text-white shadow-lg shadow-primary-200"
+                                                : "border-slate-100 bg-slate-50 text-slate-600 hover:border-primary-200"
+                                            }`}
+                                    >
+                                        {v.name}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Quantity Selection */}
+                    <div className="flex flex-col gap-3">
+                        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Quantity</label>
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center bg-slate-50 border border-slate-100 rounded-xl overflow-hidden">
+                                <button
+                                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                    className="px-4 py-2 hover:bg-slate-100 transition-colors text-slate-500 font-bold"
+                                >
+                                    -
+                                </button>
+                                <span className="px-4 py-2 text-slate-900 font-bold min-w-[3rem] text-center">{quantity}</span>
+                                <button
+                                    onClick={() => setQuantity(quantity + 1)}
+                                    className="px-4 py-2 hover:bg-slate-100 transition-colors text-slate-500 font-bold"
+                                >
+                                    +
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
                     <div className="grid grid-cols-3 gap-4 mb-4">
                         <div className="flex flex-col items-center gap-2 p-4 bg-primary-50/50 rounded-2xl border border-primary-100">
@@ -133,14 +188,17 @@ export default function ProductDetailsPage() {
 
                     <div className="flex flex-col sm:flex-row gap-4">
                         <button
-                            onClick={() => addToCart(product as any)}
+                            onClick={() => addToCart(product, quantity, selectedVariant)}
                             className="flex-1 px-8 py-5 bg-primary-500 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-primary-600 transition-all shadow-xl shadow-primary-200 active:scale-95"
                         >
                             <ShoppingCart size={24} />
                             Add to Cart
                         </button>
                         <button
-                            onClick={() => window.open(`https://wa.me/+918882522738?text=Hi, I want to order ${product.name}`, "_blank")}
+                            onClick={() => {
+                                const variantText = selectedVariant ? ` (${selectedVariant.name})` : "";
+                                window.open(`https://wa.me/+918882522738?text=Hi, I want to order ${product.name}${variantText} - Quantity: ${quantity}`, "_blank");
+                            }}
                             className="flex-1 px-8 py-5 bg-green-500 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-green-600 transition-all shadow-xl shadow-green-200 active:scale-95"
                         >
                             Order on WhatsApp

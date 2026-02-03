@@ -42,6 +42,16 @@ export default function AdminDashboard() {
     };
 
     const [imageFile, setImageFile] = useState<File | null>(null);
+    const [variants, setVariants] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (currentProduct) {
+            setVariants(currentProduct.variants || []);
+        } else {
+            setVariants([]);
+        }
+        setImageFile(null);
+    }, [currentProduct]);
 
     const handleSaveProduct = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -50,13 +60,13 @@ export default function AdminDashboard() {
 
         let imageUrl = formData.get("image") as string || currentProduct?.image || "https://placehold.co/400x400/FFF9ED/F97316?text=New+Product";
 
-        // Upload image if file is selected
+        // Upload main image if file is selected
         if (imageFile) {
             const fileExt = imageFile.name.split('.').pop();
             const fileName = `${Math.random()}.${fileExt}`;
             const filePath = `products/${fileName}`;
 
-            const { error: uploadError, data } = await supabase.storage
+            const { error: uploadError } = await supabase.storage
                 .from('product-images')
                 .upload(filePath, imageFile);
 
@@ -76,6 +86,7 @@ export default function AdminDashboard() {
             stock: parseInt(formData.get("stock") as string),
             description: formData.get("description"),
             image: imageUrl,
+            variants: variants,
         };
 
         if (currentProduct) {
@@ -86,6 +97,7 @@ export default function AdminDashboard() {
 
         setShowModal(false);
         setCurrentProduct(null);
+        setVariants([]);
         fetchProducts();
         setIsSaving(false);
     };
@@ -376,6 +388,94 @@ export default function AdminDashboard() {
                                     className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-primary-100 resize-none"
                                     placeholder="Brief product details..."
                                 />
+                            </div>
+
+                            <div className="mb-8 p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div>
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Product Variants</label>
+                                        <p className="text-[10px] text-slate-400">Add different sizes (e.g. 50g, 100g) with their own prices</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setVariants([...variants, { id: Date.now().toString(), name: "", price: 0, mrp: 0, image: "" }])}
+                                        className="px-4 py-2 bg-white text-primary-500 border border-primary-100 rounded-xl text-xs font-bold hover:bg-primary-50 transition-all flex items-center gap-1 shadow-sm"
+                                    >
+                                        <Plus size={14} /> Add Size
+                                    </button>
+                                </div>
+                                <div className="flex flex-col gap-4">
+                                    {variants.map((v, idx) => (
+                                        <div key={v.id || idx} className="p-5 bg-white rounded-2xl border border-slate-100 shadow-sm grid grid-cols-12 gap-4 items-end animate-in slide-in-from-right-2">
+                                            <div className="col-span-4 flex flex-col gap-1.5">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase">Size Name</label>
+                                                <input
+                                                    value={v.name}
+                                                    placeholder="e.g. 100 Grams"
+                                                    onChange={(e) => {
+                                                        const newVariants = [...variants];
+                                                        newVariants[idx].name = e.target.value;
+                                                        setVariants(newVariants);
+                                                    }}
+                                                    className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary-50"
+                                                />
+                                            </div>
+                                            <div className="col-span-2 flex flex-col gap-1.5">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase">Price</label>
+                                                <input
+                                                    type="number"
+                                                    value={v.price}
+                                                    onChange={(e) => {
+                                                        const newVariants = [...variants];
+                                                        newVariants[idx].price = parseFloat(e.target.value);
+                                                        setVariants(newVariants);
+                                                    }}
+                                                    className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary-50"
+                                                />
+                                            </div>
+                                            <div className="col-span-2 flex flex-col gap-1.5">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase">MRP</label>
+                                                <input
+                                                    type="number"
+                                                    value={v.mrp}
+                                                    onChange={(e) => {
+                                                        const newVariants = [...variants];
+                                                        newVariants[idx].mrp = parseFloat(e.target.value);
+                                                        setVariants(newVariants);
+                                                    }}
+                                                    className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary-50"
+                                                />
+                                            </div>
+                                            <div className="col-span-3 flex flex-col gap-1.5">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase">Image URL</label>
+                                                <input
+                                                    value={v.image}
+                                                    placeholder="Optional"
+                                                    onChange={(e) => {
+                                                        const newVariants = [...variants];
+                                                        newVariants[idx].image = e.target.value;
+                                                        setVariants(newVariants);
+                                                    }}
+                                                    className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary-50"
+                                                />
+                                            </div>
+                                            <div className="col-span-1 pb-1">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setVariants(variants.filter((_, i) => i !== idx))}
+                                                    className="p-2 text-slate-300 hover:text-red-500 transition-colors"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {variants.length === 0 && (
+                                        <div className="py-4 text-center border-2 border-dashed border-slate-100 rounded-2xl">
+                                            <p className="text-[10px] text-slate-400 font-medium">No variants added. This product exists in one size only.</p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                             <button
                                 type="submit"

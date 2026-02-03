@@ -8,6 +8,7 @@ CREATE TABLE products (
   price NUMERIC NOT NULL,
   stock INTEGER DEFAULT 0,
   description TEXT,
+  variants JSONB DEFAULT '[]'::jsonb,
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );

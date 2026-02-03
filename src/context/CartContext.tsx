@@ -1,13 +1,13 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Product, CartItem } from "@/types";
+import { Product, CartItem, Variant } from "@/types";
 
 interface CartContextType {
     cart: CartItem[];
-    addToCart: (product: Product) => void;
-    removeFromCart: (productId: string) => void;
-    updateQuantity: (productId: string, delta: number) => void;
+    addToCart: (product: Product, quantity?: number, variant?: Variant) => void;
+    removeFromCart: (cartItemId: string) => void;
+    updateQuantity: (cartItemId: string, delta: number) => void;
     clearCart: () => void;
     cartTotal: number;
     cartCount: number;
@@ -35,27 +35,48 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem("ashok_asthmi_cart", JSON.stringify(cart));
     }, [cart]);
 
-    const addToCart = (product: Product) => {
+    const addToCart = (product: Product, quantity: number = 1, variant?: Variant) => {
         setCart((prev) => {
-            const existing = prev.find((item) => item.id === product.id);
+            const variantId = variant?.id;
+            const existing = prev.find((item) => item.id === product.id && item.variantId === variantId);
+
             if (existing) {
                 return prev.map((item) =>
-                    item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+                    item.id === product.id && item.variantId === variantId
+                        ? { ...item, quantity: item.quantity + quantity }
+                        : item
                 );
             }
-            return [...prev, { ...product, quantity: 1 }];
+
+            const newItem: CartItem = {
+                ...product,
+                quantity,
+                variantId,
+                selectedSize: variant?.name,
+                // Override price/image if it's a variant
+                price: variant?.price ?? product.price,
+                mrp: variant?.mrp ?? product.mrp,
+                image: (variant?.image && variant.image.length > 0) ? variant.image : product.image
+            };
+            return [...prev, newItem];
         });
     };
 
-    const removeFromCart = (productId: string) => {
-        setCart((prev) => prev.filter((item) => item.id !== productId));
+    const removeFromCart = (cartItemId: string) => {
+        // We now use a unique ID logic if needed, but for now we filter by product ID + variant ID
+        // Simplified: use a combination as ID
+        setCart((prev) => prev.filter((item) => {
+            const itemId = item.variantId ? `${item.id}-${item.variantId}` : item.id;
+            return itemId !== cartItemId;
+        }));
     };
 
-    const updateQuantity = (productId: string, delta: number) => {
+    const updateQuantity = (cartItemId: string, delta: number) => {
         setCart((prev) =>
             prev
                 .map((item) => {
-                    if (item.id === productId) {
+                    const itemId = item.variantId ? `${item.id}-${item.variantId}` : item.id;
+                    if (itemId === cartItemId) {
                         const newQty = item.quantity + delta;
                         return newQty > 0 ? { ...item, quantity: newQty } : item;
                     }

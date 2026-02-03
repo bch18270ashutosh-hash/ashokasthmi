@@ -27,7 +27,10 @@ export default function CartPage() {
         }
 
         const cartSummary = cart
-            .map((item) => `${item.name} (x${item.quantity}) - ₹${item.price * item.quantity}`)
+            .map((item) => {
+                const sizeInfo = item.selectedSize ? ` (${item.selectedSize})` : "";
+                return `${item.name}${sizeInfo} (x${item.quantity}) - ₹${item.price * item.quantity}`;
+            })
             .join("\n");
 
         const message = `*New Order from Ashok Asthmi*\n\n*Items:*\n${cartSummary}\n\n*Total:* ₹${cartTotal}\n\n*Customer Details:*\nName: ${formData.name}\nPhone: ${formData.phone}\nAddress: ${formData.address}, ${formData.city} - ${formData.pincode}`;
@@ -65,46 +68,54 @@ export default function CartPage() {
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     <div className="bg-white rounded-[2rem] border border-primary-50 overflow-hidden shadow-sm">
                         <div className="p-6 md:p-8 flex flex-col gap-8">
-                            {cart.map((item) => (
-                                <div key={item.id} className="flex gap-6 items-center">
-                                    <div className="relative h-24 w-24 rounded-2xl bg-primary-50/50 overflow-hidden border border-primary-50 shrink-0">
-                                        <Image src={item.image} alt={item.name} fill className="object-contain p-3" />
-                                    </div>
-
-                                    <div className="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                                        <div className="flex flex-col gap-1">
-                                            <h3 className="font-bold text-slate-800 line-clamp-1">{item.name}</h3>
-                                            <p className="text-xs text-primary-500 font-medium">{item.category}</p>
-                                            <p className="text-sm font-bold text-slate-900">₹{item.price}</p>
+                            {cart.map((item) => {
+                                const cartItemId = item.variantId ? `${item.id}-${item.variantId}` : item.id;
+                                return (
+                                    <div key={cartItemId} className="flex gap-6 items-center">
+                                        <div className="relative h-24 w-24 rounded-2xl bg-primary-50/50 overflow-hidden border border-primary-50 shrink-0">
+                                            <Image src={item.image} alt={item.name} fill className="object-contain p-3" />
                                         </div>
 
-                                        <div className="flex items-center gap-6">
-                                            <div className="flex items-center gap-3 bg-slate-50 rounded-xl p-1 border border-slate-100">
-                                                <button
-                                                    onClick={() => updateQuantity(item.id, -1)}
-                                                    className="p-1 text-slate-400 hover:text-primary-600 transition-colors"
-                                                >
-                                                    <Minus size={16} />
-                                                </button>
-                                                <span className="text-sm font-bold w-4 text-center">{item.quantity}</span>
-                                                <button
-                                                    onClick={() => updateQuantity(item.id, 1)}
-                                                    className="p-1 text-slate-400 hover:text-primary-600 transition-colors"
-                                                >
-                                                    <Plus size={16} />
-                                                </button>
+                                        <div className="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                            <div className="flex flex-col gap-1">
+                                                <div className="flex flex-col">
+                                                    <h3 className="font-bold text-slate-800 line-clamp-1">{item.name}</h3>
+                                                    {item.selectedSize && (
+                                                        <span className="text-[10px] font-bold text-primary-500 uppercase tracking-widest">{item.selectedSize}</span>
+                                                    )}
+                                                </div>
+                                                <p className="text-xs text-primary-400 font-medium">{item.category}</p>
+                                                <p className="text-sm font-bold text-slate-900">₹{item.price}</p>
                                             </div>
 
-                                            <button
-                                                onClick={() => removeFromCart(item.id)}
-                                                className="p-2 text-slate-300 hover:text-red-500 transition-colors"
-                                            >
-                                                <Trash2 size={20} />
-                                            </button>
+                                            <div className="flex items-center gap-6">
+                                                <div className="flex items-center gap-3 bg-slate-50 rounded-xl p-1 border border-slate-100">
+                                                    <button
+                                                        onClick={() => updateQuantity(cartItemId, -1)}
+                                                        className="p-1 text-slate-400 hover:text-primary-600 transition-colors"
+                                                    >
+                                                        <Minus size={16} />
+                                                    </button>
+                                                    <span className="text-sm font-bold w-4 text-center">{item.quantity}</span>
+                                                    <button
+                                                        onClick={() => updateQuantity(cartItemId, 1)}
+                                                        className="p-1 text-slate-400 hover:text-primary-600 transition-colors"
+                                                    >
+                                                        <Plus size={16} />
+                                                    </button>
+                                                </div>
+
+                                                <button
+                                                    onClick={() => removeFromCart(cartItemId)}
+                                                    className="p-2 text-slate-300 hover:text-red-500 transition-colors"
+                                                >
+                                                    <Trash2 size={20} />
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
 
                         <div className="bg-slate-50 p-6 md:p-8 flex justify-between items-center border-t border-slate-100">
