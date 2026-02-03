@@ -1,332 +1,451 @@
 [
-  {
-    "id": "1",
-    "name": "Premium Mysore Sandal Agarbatti",
-    "category": "Incense (Agarbatti / Dhoop)",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Sandal+Agarbatti",
-    "mrp": 150,
-    "price": 120,
-    "stock": 50,
-    "description": "Pure Mysore Sandalwood fragrance incense sticks for a peaceful environment.",
-    "tags": ["fragrance", "incense", "meditation"]
-  },
-  {
-    "id": "2",
-    "name": "Natural Cow Dung Dhoop Cones",
-    "category": "Incense (Agarbatti / Dhoop)",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Dhoop+Cones",
-    "mrp": 100,
-    "price": 85,
-    "stock": 100,
-    "description": "Chemical-free dhoop cones made from natural ingredients.",
-    "tags": ["natural", "organic", "dhoop"]
-  },
-  {
-    "id": "3",
-    "name": "Bhimseni Camphor (Kapoor)",
-    "category": "Puja Powders (Kumkum / Haldi / Chandan)",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Bhimseni+Camphor",
-    "mrp": 250,
-    "price": 199,
-    "stock": 30,
-    "description": "100% Pure Bhimseni Camphor for holy aarti and air purification.",
-    "tags": ["pure", "kapoor", "aarti"]
-  },
-  {
-    "id": "4",
-    "name": "Cow Ghee Diya (Ready-to-use)",
-    "category": "Diyas & Lamps",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Ghee+Diya",
-    "mrp": 200,
-    "price": 175,
-    "stock": 45,
-    "description": "Premium pure cow ghee wicks for daily puja rituals.",
-    "tags": ["ghee", "diya", "ritual"]
-  },
-  {
-    "id": "5",
-    "name": "Handmade Brass Puja Thali Set",
-    "category": "Puja Thali & Accessories",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Brass+Thali",
-    "mrp": 1200,
-    "price": 899,
-    "stock": 15,
-    "description": "Elegant brass puja thali set including diya, agarbatti holder, and katori.",
-    "tags": ["brass", "thali", "premium"]
-  },
-  {
-    "id": "6",
-    "name": "Ganga Jal (Holy Water) - 500ml",
-    "category": "Holy Water & Oils",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Ganga+Jal",
-    "mrp": 80,
-    "price": 60,
-    "stock": 80,
-    "description": "Pavitra Ganga Jal sourced directly from Rishikesh.",
-    "tags": ["holy water", "gangajal", "spritual"]
-  },
-  {
-    "id": "7",
-    "name": "Round Cotton Wicks (Batti) - Pack of 500",
-    "category": "Diyas & Lamps",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Cotton+Wicks",
-    "mrp": 120,
-    "price": 95,
-    "stock": 200,
-    "description": "High-quality round cotton wicks for long-lasting lighting.",
-    "tags": ["cotton", "wicks", "diya"]
-  },
-  {
-    "id": "8",
-    "name": "Pure Kumkum (Roli) - 100g",
-    "category": "Puja Powders (Kumkum / Haldi / Chandan)",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Kumkum",
-    "mrp": 60,
-    "price": 45,
-    "stock": 150,
-    "description": "Natural red kumkum for tilak and puja use.",
-    "tags": ["kumkum", "roli", "tilak"]
-  },
-  {
-    "id": "9",
-    "name": "Turmeric Powder (Haldi) - 100g",
-    "category": "Puja Powders (Kumkum / Haldi / Chandan)",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Haldi",
-    "mrp": 50,
-    "price": 40,
-    "stock": 120,
-    "description": "Pavitra Haldi powder for abhishekam and rituals.",
-    "tags": ["haldi", "turmeric", "pure"]
-  },
-  {
-    "id": "10",
-    "name": "White Chandan Powder - 50g",
-    "category": "Puja Powders (Kumkum / Haldi / Chandan)",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Chandan",
-    "mrp": 90,
-    "price": 75,
-    "stock": 90,
-    "description": "Fragrant white sandalwood powder for deities.",
-    "tags": ["chandan", "sandalwood", "shringar"]
-  },
-  {
-    "id": "11",
-    "name": "Brass Pooja Bell (Ghanti)",
-    "category": "Puja Thali & Accessories",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Brass+Bell",
-    "mrp": 450,
-    "price": 349,
-    "stock": 25,
-    "description": "Clear-sounding traditional brass bell for puja room.",
-    "tags": ["bell", "ghanti", "brass"]
-  },
-  {
-    "id": "12",
-    "name": "Copper Kalash (Small)",
-    "category": "Puja Thali & Accessories",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Copper+Kalash",
-    "mrp": 350,
-    "price": 275,
-    "stock": 35,
-    "description": "Pure copper kalash for storing holy water.",
-    "tags": ["copper", "kalash", "mangalik"]
-  },
-  {
-    "id": "13",
-    "name": "Designer Incense Stick Holder",
-    "category": "Puja Thali & Accessories",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Agarbatti+Holder",
-    "mrp": 180,
-    "price": 149,
-    "stock": 60,
-    "description": "Stylish brass incense holder to keep your space clean.",
-    "tags": ["holder", "incense", "decor"]
-  },
-  {
-    "id": "14",
-    "name": "Long Matchbox (Pack of 10)",
-    "category": "Puja Thali & Accessories",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Matchbox",
-    "mrp": 100,
-    "price": 90,
-    "stock": 300,
-    "description": "Safety matches with long sticks for easy lighting.",
-    "tags": ["matches", "utility"]
-  },
-  {
-    "id": "15",
-    "name": "Complete Havan Samagri - 500g",
-    "category": "Havan Items",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Havan+Samagri",
-    "mrp": 300,
-    "price": 240,
-    "stock": 40,
-    "description": "A mix of herbs and natural ingredients for holy fire (Havan).",
-    "tags": ["havan", "samagri", "herbal"]
-  },
-  {
-    "id": "16",
-    "name": "Panchmukhi Rudraksha Mala",
-    "category": "Puja Thali & Accessories",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Rudraksha+Mala",
-    "mrp": 500,
-    "price": 399,
-    "stock": 20,
-    "description": "Original 108+1 beads Panchmukhi Rudraksha for chanting.",
-    "tags": ["mala", "rudraksha", "chanting"]
-  },
-  {
-    "id": "17",
-    "name": "Roli Chawal Combo Pack",
-    "category": "Puja Powders (Kumkum / Haldi / Chandan)",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Roli+Chawal",
-    "mrp": 40,
-    "price": 30,
-    "stock": 250,
-    "description": "Pure kumkum and unbroken rice (Akshat) for tilak.",
-    "tags": ["roli", "chawal", "combo"]
-  },
-  {
-    "id": "18",
-    "name": "Clay Diya Set (Pack of 20)",
-    "category": "Diyas & Lamps",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Clay+Diyas",
-    "mrp": 150,
-    "price": 120,
-    "stock": 100,
-    "description": "Traditional clay lamps for festive decorations.",
-    "tags": ["clay", "diya", "traditional"]
-  },
-  {
-    "id": "19",
-    "name": "Sesame Oil for Deepam - 1L",
-    "category": "Holy Water & Oils",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Sesame+Oil",
-    "mrp": 280,
-    "price": 240,
-    "stock": 55,
-    "description": "Pure sesame oil for long-burning holy lamps.",
-    "tags": ["oil", "sesame", "deepam"]
-  },
-  {
-    "id": "20",
-    "name": "Natural White Conch (Shankh)",
-    "category": "Puja Thali & Accessories",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Shankh",
-    "mrp": 800,
-    "price": 599,
-    "stock": 10,
-    "description": "Auspicious blowing conch for spiritual energy.",
-    "tags": ["shankh", "conch", "auspicious"]
-  },
-  {
-    "id": "21",
-    "name": "Lotus Petal Floating Diyas",
-    "category": "Diyas & Lamps",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Floating+Diya",
-    "mrp": 400,
-    "price": 320,
-    "stock": 40,
-    "description": "Beautiful floating diyas for home decoration.",
-    "tags": ["decor", "floating", "flower"]
-  },
-  {
-    "id": "22",
-    "name": "Loban Dhoop Powder - 200g",
-    "category": "Incense (Agarbatti / Dhoop)",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Loban+Powder",
-    "mrp": 180,
-    "price": 150,
-    "stock": 70,
-    "description": "Pure loban powder for air purification and energy.",
-    "tags": ["loban", "dhoop", "spiritual"]
-  },
-  {
-    "id": "23",
-    "name": "Wooden Havan Kund",
-    "category": "Havan Items",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Havan+Kund",
-    "mrp": 600,
-    "price": 499,
-    "stock": 12,
-    "description": "Small wooden havan kund for safe home rituals.",
-    "tags": ["kund", "havan", "ritual"]
-  },
-  {
-    "id": "24",
-    "name": "Red Puja Cloth (Aasan)",
-    "category": "Puja Thali & Accessories",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Puja+Cloth",
-    "mrp": 150,
-    "price": 99,
-    "stock": 80,
-    "description": "Velvet red cloth for deity platforms or seating.",
-    "tags": ["cloth", "aasan", "red"]
-  },
-  {
-    "id": "25",
-    "name": "Camphor Burner (Electrical)",
-    "category": "Diyas & Lamps",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Camphor+Burner",
-    "mrp": 450,
-    "price": 349,
-    "stock": 22,
-    "description": "Electric camphor diffuser for lasting fragrance.",
-    "tags": ["electric", "burner", "diffuser"]
-  },
-  {
-    "id": "26",
-    "name": "Pure Honey for Abhishekam - 250g",
-    "category": "Holy Water & Oils",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Honey",
-    "mrp": 120,
-    "price": 95,
-    "stock": 45,
-    "description": "Natural pure honey for panchamrit and rituals.",
-    "tags": ["honey", "abhishekam", "food"]
-  },
-  {
-    "id": "27",
-    "name": "Dried Rose Petals - 50g",
-    "category": "Puja Powders (Kumkum / Haldi / Chandan)",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Rose+Petals",
-    "mrp": 80,
-    "price": 55,
-    "stock": 60,
-    "description": "Fragrant dried rose petals for floral offerings.",
-    "tags": ["flower", "rose", "decoration"]
-  },
-  {
-    "id": "28",
-    "name": "Peacock Feather (Mor Pankh) - Pack of 5",
-    "category": "Puja Thali & Accessories",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Mor+Pankh",
-    "mrp": 150,
-    "price": 110,
-    "stock": 35,
-    "description": "Natural peacock feathers for Krishna puja and decor.",
-    "tags": ["krishna", "feather", "decor"]
-  },
-  {
-    "id": "29",
-    "name": "Brass Aarti Lamp (Handle)",
-    "category": "Diyas & Lamps",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Aarti+Lamp",
-    "mrp": 500,
-    "price": 380,
-    "stock": 18,
-    "description": "Traditional single-wick aarti lamp with a sturdy handle.",
-    "tags": ["aarti", "diya", "brass"]
-  },
-  {
-    "id": "30",
-    "name": "Ganesh Idols (Clay - Hand-painted)",
-    "category": "Idols & Decorative Items (optional)",
-    "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Ganesh+Idol",
-    "mrp": 1500,
-    "price": 1200,
-    "stock": 8,
-    "description": "Eco-friendly hand-painted Ganesh idol for home temple.",
-    "tags": ["idol", "ganesh", "clay"]
-  }
+    {
+        "id": "1",
+        "name": "Premium Mysore Sandal Agarbatti",
+        "category": "Incense (Agarbatti / Dhoop)",
+        "image": "/images/products/sandal_agarbatti.png",
+        "mrp": 150,
+        "price": 120,
+        "stock": 50,
+        "description": "Pure Mysore Sandalwood fragrance incense sticks for a peaceful environment.",
+        "tags": [
+            "fragrance",
+            "incense",
+            "meditation"
+        ]
+    },
+    {
+        "id": "2",
+        "name": "Natural Cow Dung Dhoop Cones",
+        "category": "Incense (Agarbatti / Dhoop)",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Dhoop+Cones",
+        "mrp": 100,
+        "price": 85,
+        "stock": 100,
+        "description": "Chemical-free dhoop cones made from natural ingredients.",
+        "tags": [
+            "natural",
+            "organic",
+            "dhoop"
+        ]
+    },
+    {
+        "id": "3",
+        "name": "Bhimseni Camphor (Kapoor)",
+        "category": "Puja Powders (Kumkum / Haldi / Chandan)",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Bhimseni+Camphor",
+        "mrp": 250,
+        "price": 199,
+        "stock": 30,
+        "description": "100% Pure Bhimseni Camphor for holy aarti and air purification.",
+        "tags": [
+            "pure",
+            "kapoor",
+            "aarti"
+        ]
+    },
+    {
+        "id": "4",
+        "name": "Cow Ghee Diya (Ready-to-use)",
+        "category": "Diyas & Lamps",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Ghee+Diya",
+        "mrp": 200,
+        "price": 175,
+        "stock": 45,
+        "description": "Premium pure cow ghee wicks for daily puja rituals.",
+        "tags": [
+            "ghee",
+            "diya",
+            "ritual"
+        ]
+    },
+    {
+        "id": "5",
+        "name": "Handmade Brass Puja Thali Set",
+        "category": "Puja Thali & Accessories",
+        "image": "/images/products/brass_thali.png",
+        "mrp": 1200,
+        "price": 899,
+        "stock": 15,
+        "description": "Elegant brass puja thali set including diya, agarbatti holder, and katori.",
+        "tags": [
+            "brass",
+            "thali",
+            "premium"
+        ]
+    },
+    {
+        "id": "6",
+        "name": "Ganga Jal (Holy Water) - 500ml",
+        "category": "Holy Water & Oils",
+        "image": "/images/products/ganga_jal.png",
+        "mrp": 80,
+        "price": 60,
+        "stock": 80,
+        "description": "Pavitra Ganga Jal sourced directly from Rishikesh.",
+        "tags": [
+            "holy water",
+            "gangajal",
+            "spritual"
+        ]
+    },
+    {
+        "id": "7",
+        "name": "Round Cotton Wicks (Batti) - Pack of 500",
+        "category": "Diyas & Lamps",
+        "image": "/images/products/cotton_wicks.png",
+        "mrp": 120,
+        "price": 95,
+        "stock": 200,
+        "description": "High-quality round cotton wicks for long-lasting lighting.",
+        "tags": [
+            "cotton",
+            "wicks",
+            "diya"
+        ]
+    },
+    {
+        "id": "8",
+        "name": "Pure Kumkum (Roli) - 100g",
+        "category": "Puja Powders (Kumkum / Haldi / Chandan)",
+        "image": "/images/products/kumkum.png",
+        "mrp": 60,
+        "price": 45,
+        "stock": 150,
+        "description": "Natural red kumkum for tilak and puja use.",
+        "tags": [
+            "kumkum",
+            "roli",
+            "tilak"
+        ]
+    },
+    {
+        "id": "9",
+        "name": "Turmeric Powder (Haldi) - 100g",
+        "category": "Puja Powders (Kumkum / Haldi / Chandan)",
+        "image": "/images/products/turmeric.png",
+        "mrp": 50,
+        "price": 40,
+        "stock": 120,
+        "description": "Pavitra Haldi powder for abhishekam and rituals.",
+        "tags": [
+            "haldi",
+            "turmeric",
+            "pure"
+        ]
+    },
+    {
+        "id": "10",
+        "name": "White Chandan Powder - 50g",
+        "category": "Puja Powders (Kumkum / Haldi / Chandan)",
+        "image": "/images/products/chandan.png",
+        "mrp": 90,
+        "price": 75,
+        "stock": 90,
+        "description": "Fragrant white sandalwood powder for deities.",
+        "tags": [
+            "chandan",
+            "sandalwood",
+            "shringar"
+        ]
+    },
+    {
+        "id": "11",
+        "name": "Brass Pooja Bell (Ghanti)",
+        "category": "Puja Thali & Accessories",
+        "image": "/images/products/puja_bell.png",
+        "mrp": 450,
+        "price": 349,
+        "stock": 25,
+        "description": "Clear-sounding traditional brass bell for puja room.",
+        "tags": [
+            "bell",
+            "ghanti",
+            "brass"
+        ]
+    },
+    {
+        "id": "12",
+        "name": "Copper Kalash (Small)",
+        "category": "Puja Thali & Accessories",
+        "image": "/images/products/copper_kalash.png",
+        "mrp": 350,
+        "price": 275,
+        "stock": 35,
+        "description": "Pure copper kalash for storing holy water.",
+        "tags": [
+            "copper",
+            "kalash",
+            "mangalik"
+        ]
+    },
+    {
+        "id": "13",
+        "name": "Designer Incense Stick Holder",
+        "category": "Puja Thali & Accessories",
+        "image": "/images/products/incense_holder.png",
+        "mrp": 180,
+        "price": 149,
+        "stock": 60,
+        "description": "Stylish brass incense holder to keep your space clean.",
+        "tags": [
+            "holder",
+            "incense",
+            "decor"
+        ]
+    },
+    {
+        "id": "14",
+        "name": "Long Matchbox (Pack of 10)",
+        "category": "Puja Thali & Accessories",
+        "image": "/images/products/matchbox.png",
+        "mrp": 100,
+        "price": 90,
+        "stock": 300,
+        "description": "Safety matches with long sticks for easy lighting.",
+        "tags": [
+            "matches",
+            "utility"
+        ]
+    },
+    {
+        "id": "15",
+        "name": "Complete Havan Samagri - 500g",
+        "category": "Havan Items",
+        "image": "/images/products/havan_samagri.png",
+        "mrp": 300,
+        "price": 240,
+        "stock": 40,
+        "description": "A mix of herbs and natural ingredients for holy fire (Havan).",
+        "tags": [
+            "havan",
+            "samagri",
+            "herbal"
+        ]
+    },
+    {
+        "id": "16",
+        "name": "Panchmukhi Rudraksha Mala",
+        "category": "Puja Thali & Accessories",
+        "image": "/images/products/rudraksha_mala.png",
+        "mrp": 500,
+        "price": 399,
+        "stock": 20,
+        "description": "Original 108+1 beads Panchmukhi Rudraksha for chanting.",
+        "tags": [
+            "mala",
+            "rudraksha",
+            "chanting"
+        ]
+    },
+    {
+        "id": "17",
+        "name": "Roli Chawal Combo Pack",
+        "category": "Puja Powders (Kumkum / Haldi / Chandan)",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Roli+Chawal",
+        "mrp": 40,
+        "price": 30,
+        "stock": 250,
+        "description": "Pure kumkum and unbroken rice (Akshat) for tilak.",
+        "tags": [
+            "roli",
+            "chawal",
+            "combo"
+        ]
+    },
+    {
+        "id": "18",
+        "name": "Clay Diya Set (Pack of 20)",
+        "category": "Diyas & Lamps",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Clay+Diyas",
+        "mrp": 150,
+        "price": 120,
+        "stock": 100,
+        "description": "Traditional clay lamps for festive decorations.",
+        "tags": [
+            "clay",
+            "diya",
+            "traditional"
+        ]
+    },
+    {
+        "id": "19",
+        "name": "Sesame Oil for Deepam - 1L",
+        "category": "Holy Water & Oils",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Sesame+Oil",
+        "mrp": 280,
+        "price": 240,
+        "stock": 55,
+        "description": "Pure sesame oil for long-burning holy lamps.",
+        "tags": [
+            "oil",
+            "sesame",
+            "deepam"
+        ]
+    },
+    {
+        "id": "20",
+        "name": "Natural White Conch (Shankh)",
+        "category": "Puja Thali & Accessories",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Shankh",
+        "mrp": 800,
+        "price": 599,
+        "stock": 10,
+        "description": "Auspicious blowing conch for spiritual energy.",
+        "tags": [
+            "shankh",
+            "conch",
+            "auspicious"
+        ]
+    },
+    {
+        "id": "21",
+        "name": "Lotus Petal Floating Diyas",
+        "category": "Diyas & Lamps",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Floating+Diya",
+        "mrp": 400,
+        "price": 320,
+        "stock": 40,
+        "description": "Beautiful floating diyas for home decoration.",
+        "tags": [
+            "decor",
+            "floating",
+            "flower"
+        ]
+    },
+    {
+        "id": "22",
+        "name": "Loban Dhoop Powder - 200g",
+        "category": "Incense (Agarbatti / Dhoop)",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Loban+Powder",
+        "mrp": 180,
+        "price": 150,
+        "stock": 70,
+        "description": "Pure loban powder for air purification and energy.",
+        "tags": [
+            "loban",
+            "dhoop",
+            "spiritual"
+        ]
+    },
+    {
+        "id": "23",
+        "name": "Wooden Havan Kund",
+        "category": "Havan Items",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Havan+Kund",
+        "mrp": 600,
+        "price": 499,
+        "stock": 12,
+        "description": "Small wooden havan kund for safe home rituals.",
+        "tags": [
+            "kund",
+            "havan",
+            "ritual"
+        ]
+    },
+    {
+        "id": "24",
+        "name": "Red Puja Cloth (Aasan)",
+        "category": "Puja Thali & Accessories",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Puja+Cloth",
+        "mrp": 150,
+        "price": 99,
+        "stock": 80,
+        "description": "Velvet red cloth for deity platforms or seating.",
+        "tags": [
+            "cloth",
+            "aasan",
+            "red"
+        ]
+    },
+    {
+        "id": "25",
+        "name": "Camphor Burner (Electrical)",
+        "category": "Diyas & Lamps",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Camphor+Burner",
+        "mrp": 450,
+        "price": 349,
+        "stock": 22,
+        "description": "Electric camphor diffuser for lasting fragrance.",
+        "tags": [
+            "electric",
+            "burner",
+            "diffuser"
+        ]
+    },
+    {
+        "id": "26",
+        "name": "Pure Honey for Abhishekam - 250g",
+        "category": "Holy Water & Oils",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Honey",
+        "mrp": 120,
+        "price": 95,
+        "stock": 45,
+        "description": "Natural pure honey for panchamrit and rituals.",
+        "tags": [
+            "honey",
+            "abhishekam",
+            "food"
+        ]
+    },
+    {
+        "id": "27",
+        "name": "Dried Rose Petals - 50g",
+        "category": "Puja Powders (Kumkum / Haldi / Chandan)",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Rose+Petals",
+        "mrp": 80,
+        "price": 55,
+        "stock": 60,
+        "description": "Fragrant dried rose petals for floral offerings.",
+        "tags": [
+            "flower",
+            "rose",
+            "decoration"
+        ]
+    },
+    {
+        "id": "28",
+        "name": "Peacock Feather (Mor Pankh) - Pack of 5",
+        "category": "Puja Thali & Accessories",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Mor+Pankh",
+        "mrp": 150,
+        "price": 110,
+        "stock": 35,
+        "description": "Natural peacock feathers for Krishna puja and decor.",
+        "tags": [
+            "krishna",
+            "feather",
+            "decor"
+        ]
+    },
+    {
+        "id": "29",
+        "name": "Brass Aarti Lamp (Handle)",
+        "category": "Diyas & Lamps",
+        "image": "https://placehold.co/400x400/FFF9ED/F97316?text=Aarti+Lamp",
+        "mrp": 500,
+        "price": 380,
+        "stock": 18,
+        "description": "Traditional single-wick aarti lamp with a sturdy handle.",
+        "tags": [
+            "aarti",
+            "diya",
+            "brass"
+        ]
+    },
+    {
+        "id": "30",
+        "name": "Ganesh Idols (Clay - Hand-painted)",
+        "category": "Idols & Decorative Items (optional)",
+        "image": "/images/products/ganesh_idol.png",
+        "mrp": 1500,
+        "price": 1200,
+        "stock": 8,
+        "description": "Eco-friendly hand-painted Ganesh idol for home temple.",
+        "tags": [
+            "idol",
+            "ganesh",
+            "clay"
+        ]
+    }
 ]
