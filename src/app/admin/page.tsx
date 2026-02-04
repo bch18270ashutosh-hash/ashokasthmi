@@ -197,56 +197,74 @@ export default function AdminDashboard() {
         setIsSaving(true);
         const formData = new FormData(e.currentTarget as HTMLFormElement);
 
-        // Handle Multiple Product Images Upload
-        const imageUrls: string[] = [];
-        for (const img of productImages) {
-            if (typeof img === 'string') {
-                imageUrls.push(img);
-            } else if (img instanceof File) {
-                const url = await uploadImage(img, 'products');
-                if (url) imageUrls.push(url);
+        try {
+            // Handle Multiple Product Images Upload
+            const imageUrls: string[] = [];
+            for (const img of productImages) {
+                if (typeof img === 'string') {
+                    imageUrls.push(img);
+                } else if (img instanceof File) {
+                    const url = await uploadImage(img, 'products');
+                    if (url) imageUrls.push(url);
+                }
             }
-        }
 
-        // Handle Variant Image Uploads
-        const variantsWithUrls = await Promise.all(variants.map(async (v) => {
-            let variantImage = v.image;
-            if (v.file) {
-                const url = await uploadImage(v.file, 'variants');
-                if (url) variantImage = url;
-            }
-            return {
-                id: v.id,
-                name: v.name,
-                price: v.price,
-                mrp: v.mrp,
-                image: variantImage
+            // Handle Variant Image Uploads - ensure proper numeric values
+            const variantsWithUrls = await Promise.all(variants.map(async (v) => {
+                let variantImage = v.image || "";
+                if (v.file) {
+                    const url = await uploadImage(v.file, 'variants');
+                    if (url) variantImage = url;
+                }
+                return {
+                    id: v.id || Date.now().toString(),
+                    name: String(v.name || ""),
+                    price: parseFloat(v.price) || 0,
+                    mrp: parseFloat(v.mrp) || 0,
+                    image: variantImage
+                };
+            }));
+
+            console.log("Saving variants:", variantsWithUrls);
+
+            const productData = {
+                name: formData.get("name"),
+                category: formData.get("category"),
+                price: parseFloat(formData.get("price") as string) || 0,
+                mrp: parseFloat(formData.get("mrp") as string) || 0,
+                stock: parseInt(formData.get("stock") as string) || 0,
+                description: formData.get("description") || "",
+                image: imageUrls[0] || currentProduct?.image || null,
+                images: imageUrls.length > 0 ? imageUrls : null,
+                variants: variantsWithUrls.length > 0 ? variantsWithUrls : null,
             };
-        }));
 
-        const productData = {
-            name: formData.get("name"),
-            category: formData.get("category"),
-            price: parseFloat(formData.get("price") as string),
-            mrp: parseFloat(formData.get("mrp") as string),
-            stock: parseInt(formData.get("stock") as string),
-            description: formData.get("description"),
-            image: imageUrls[0] || currentProduct?.image || null,
-            images: imageUrls,
-            variants: variantsWithUrls,
-        };
+            console.log("Saving product data:", productData);
 
-        if (currentProduct) {
-            await supabase.from("products").update(productData).eq("id", currentProduct.id);
-        } else {
-            await supabase.from("products").insert([productData]);
+            let result;
+            if (currentProduct) {
+                result = await supabase.from("products").update(productData).eq("id", currentProduct.id);
+            } else {
+                result = await supabase.from("products").insert([productData]);
+            }
+
+            if (result.error) {
+                console.error("Error saving product:", result.error);
+                alert("Error saving product: " + result.error.message);
+            } else {
+                console.log("Product saved successfully");
+            }
+
+            setShowModal(false);
+            setCurrentProduct(null);
+            setVariants([]);
+            setProductImages([]);
+            fetchProducts();
+        } catch (err) {
+            console.error("Error in handleSaveProduct:", err);
+            alert("An error occurred while saving the product.");
         }
 
-        setShowModal(false);
-        setCurrentProduct(null);
-        setVariants([]);
-        setProductImages([]);
-        fetchProducts();
         setIsSaving(false);
     };
 
@@ -298,7 +316,16 @@ export default function AdminDashboard() {
 
     const openProductModal = (product: any = null) => {
         setCurrentProduct(product);
-        setVariants(product?.variants || []);
+        // Properly initialize variants with all required fields
+        const loadedVariants = (product?.variants || []).map((v: any) => ({
+            id: v.id || Date.now().toString() + Math.random(),
+            name: v.name || "",
+            price: parseFloat(v.price) || 0,
+            mrp: parseFloat(v.mrp) || 0,
+            image: v.image || "",
+            file: null
+        }));
+        setVariants(loadedVariants);
         setProductImages(product?.images || (product?.image ? [product.image] : []));
         setShowModal(true);
     };
