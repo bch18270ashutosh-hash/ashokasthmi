@@ -135,12 +135,12 @@ export default function HomePage() {
               href={`/shop?category=${encodeURIComponent(cat.name)}`}
               className="group flex flex-col items-center gap-4"
             >
-              <div className="relative aspect-square w-full rounded-full overflow-hidden bg-primary-50 border-2 border-transparent group-hover:border-primary-500 group-hover:shadow-lg transition-all duration-300">
+              <div className="relative aspect-square w-full rounded-full overflow-hidden bg-primary-50 border-2 border-transparent group-hover:border-primary-500 group-hover:shadow-xl transition-all duration-300">
                 <Image
                   src={cat.image_url || `https://placehold.co/200x200/FFF9ED/F97316?text=${cat.name.split(' ')[0]}`}
                   alt={cat.name}
                   fill
-                  className="object-contain p-6 grayscale group-hover:grayscale-0 transition-all duration-500"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
               <span className="text-sm font-semibold text-slate-700 group-hover:text-primary-600 text-center transition-colors">
