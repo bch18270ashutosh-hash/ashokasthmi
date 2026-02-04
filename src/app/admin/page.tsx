@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import {
     LayoutDashboard, Package, Users, BarChart3, Plus, Search,
-    MoreVertical, Edit, Trash2, X, Loader2, Upload, Sparkles, Check
+    MoreVertical, Edit, Trash2, X, Loader2, Upload, Sparkles, Check, Clipboard, ImagePlus
 } from "lucide-react";
 import Image from "next/image";
 import AdminLogin from "@/components/admin/AdminLogin";
@@ -21,13 +21,73 @@ export default function AdminDashboard() {
     const [currentCategory, setCurrentCategory] = useState<any>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [variants, setVariants] = useState<any[]>([]);
-    const [imageFile, setImageFile] = useState<File | null>(null);
+
+    // Multiple images support
+    const [productImages, setProductImages] = useState<(File | string)[]>([]);
+    const [categoryImage, setCategoryImage] = useState<File | string | null>(null);
+
+    // Refs for paste functionality
+    const productImageRef = useRef<HTMLDivElement>(null);
+    const categoryImageRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         checkUser();
         fetchProducts();
         fetchCategories();
     }, []);
+
+    // Handle paste for product images
+    const handleProductImagePaste = useCallback((e: ClipboardEvent) => {
+        const items = e.clipboardData?.items;
+        if (!items) return;
+
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+                const file = items[i].getAsFile();
+                if (file) {
+                    setProductImages(prev => [...prev, file]);
+                    e.preventDefault();
+                    break;
+                }
+            }
+        }
+    }, []);
+
+    // Handle paste for category image
+    const handleCategoryImagePaste = useCallback((e: ClipboardEvent) => {
+        const items = e.clipboardData?.items;
+        if (!items) return;
+
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+                const file = items[i].getAsFile();
+                if (file) {
+                    setCategoryImage(file);
+                    e.preventDefault();
+                    break;
+                }
+            }
+        }
+    }, []);
+
+    // Handle paste for variant images
+    const handleVariantImagePaste = useCallback((e: ClipboardEvent, idx: number) => {
+        const items = e.clipboardData?.items;
+        if (!items) return;
+
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+                const file = items[i].getAsFile();
+                if (file) {
+                    const nv = [...variants];
+                    nv[idx].file = file;
+                    setVariants(nv);
+                    e.preventDefault();
+                    break;
+                }
+            }
+        }
+    }, [variants]);
 
     const fetchCategories = async () => {
         const { data, error } = await supabase
@@ -53,37 +113,55 @@ export default function AdminDashboard() {
         setLoading(false);
     };
 
+    // Upload a single image file
+    const uploadImage = async (file: File, folder: string): Promise<string | null> => {
+        const fileExt = file.name.split('.').pop() || 'jpg';
+        const fileName = `${Math.random().toString(36).slice(2)}_${Date.now()}.${fileExt}`;
+        const filePath = `${folder}/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from('product-images')
+            .upload(filePath, file);
+
+        if (!uploadError) {
+            const { data: { publicUrl } } = supabase.storage
+                .from('product-images')
+                .getPublicUrl(filePath);
+            return publicUrl;
+        }
+        return null;
+    };
+
     const handleSaveProduct = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
         const formData = new FormData(e.currentTarget as HTMLFormElement);
 
-        // Handle Main Image Upload
-        let imageUrl = currentProduct?.image;
-        if (imageFile) {
-            const fileExt = imageFile.name.split('.').pop();
-            const fileName = `${Math.random()}.${fileExt}`;
-            const filePath = `products/${fileName}`;
-            const { error: uploadError } = await supabase.storage.from('product-images').upload(filePath, imageFile);
-            if (!uploadError) {
-                const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(filePath);
-                imageUrl = publicUrl;
+        // Handle Multiple Product Images Upload
+        const imageUrls: string[] = [];
+        for (const img of productImages) {
+            if (typeof img === 'string') {
+                imageUrls.push(img);
+            } else if (img instanceof File) {
+                const url = await uploadImage(img, 'products');
+                if (url) imageUrls.push(url);
             }
         }
 
         // Handle Variant Image Uploads
         const variantsWithUrls = await Promise.all(variants.map(async (v) => {
+            let variantImage = v.image;
             if (v.file) {
-                const fileExt = v.file.name.split('.').pop();
-                const fileName = `${Math.random()}.${fileExt}`;
-                const filePath = `variants/${fileName}`;
-                const { error: uploadError } = await supabase.storage.from('product-images').upload(filePath, v.file);
-                if (!uploadError) {
-                    const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(filePath);
-                    return { ...v, image: publicUrl, file: undefined };
-                }
+                const url = await uploadImage(v.file, 'variants');
+                if (url) variantImage = url;
             }
-            return { ...v, file: undefined };
+            return {
+                id: v.id,
+                name: v.name,
+                price: v.price,
+                mrp: v.mrp,
+                image: variantImage
+            };
         }));
 
         const productData = {
@@ -93,7 +171,8 @@ export default function AdminDashboard() {
             mrp: parseFloat(formData.get("mrp") as string),
             stock: parseInt(formData.get("stock") as string),
             description: formData.get("description"),
-            image: imageUrl,
+            image: imageUrls[0] || currentProduct?.image || null,
+            images: imageUrls,
             variants: variantsWithUrls,
         };
 
@@ -106,7 +185,7 @@ export default function AdminDashboard() {
         setShowModal(false);
         setCurrentProduct(null);
         setVariants([]);
-        setImageFile(null);
+        setProductImages([]);
         fetchProducts();
         setIsSaving(false);
     };
@@ -116,23 +195,15 @@ export default function AdminDashboard() {
         setIsSaving(true);
         const formData = new FormData(e.currentTarget as HTMLFormElement);
         const name = formData.get("name") as string;
-        const imageFile = formData.get("categoryImage") as File;
+
         let imageUrl = currentCategory?.image_url;
 
-        if (imageFile && imageFile.name) {
-            const fileExt = imageFile.name.split('.').pop();
-            const fileName = `${Math.random()}.${fileExt}`;
-            const filePath = `categories/${fileName}`;
-
-            const { error: uploadError } = await supabase.storage
-                .from('product-images')
-                .upload(filePath, imageFile);
-
-            if (!uploadError) {
-                const { data: { publicUrl } } = supabase.storage
-                    .from('product-images')
-                    .getPublicUrl(filePath);
-                imageUrl = publicUrl;
+        if (categoryImage) {
+            if (categoryImage instanceof File) {
+                const url = await uploadImage(categoryImage, 'categories');
+                if (url) imageUrl = url;
+            } else {
+                imageUrl = categoryImage;
             }
         }
 
@@ -146,6 +217,7 @@ export default function AdminDashboard() {
 
         setShowCategoryModal(false);
         setCurrentCategory(null);
+        setCategoryImage(null);
         fetchCategories();
         setIsSaving(false);
     };
@@ -162,6 +234,28 @@ export default function AdminDashboard() {
             await supabase.from("categories").delete().eq("id", id);
             fetchCategories();
         }
+    };
+
+    const openProductModal = (product: any = null) => {
+        setCurrentProduct(product);
+        setVariants(product?.variants || []);
+        setProductImages(product?.images || (product?.image ? [product.image] : []));
+        setShowModal(true);
+    };
+
+    const openCategoryModal = (category: any = null) => {
+        setCurrentCategory(category);
+        setCategoryImage(category?.image_url || null);
+        setShowCategoryModal(true);
+    };
+
+    const removeProductImage = (index: number) => {
+        setProductImages(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const getImageSrc = (img: File | string): string => {
+        if (typeof img === 'string') return img;
+        return URL.createObjectURL(img);
     };
 
     if (isAuthenticated === null) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-primary-500" /></div>;
@@ -206,7 +300,7 @@ export default function AdminDashboard() {
 
                     {activeTab === "products" && (
                         <button
-                            onClick={() => { setCurrentProduct(null); setVariants([]); setImageFile(null); setShowModal(true); }}
+                            onClick={() => openProductModal()}
                             className="flex items-center justify-center gap-2 px-6 py-4 bg-primary-500 text-white rounded-2xl font-bold shadow-lg shadow-primary-200 hover:bg-primary-600 transition-all min-h-[48px]"
                         >
                             <Plus size={18} /> Add New Product
@@ -214,7 +308,7 @@ export default function AdminDashboard() {
                     )}
                     {activeTab === "categories" && (
                         <button
-                            onClick={() => { setCurrentCategory(null); setShowCategoryModal(true); }}
+                            onClick={() => openCategoryModal()}
                             className="flex items-center justify-center gap-2 px-6 py-4 bg-primary-500 text-white rounded-2xl font-bold shadow-lg shadow-primary-200 hover:bg-primary-600 transition-all min-h-[48px]"
                         >
                             <Plus size={18} /> Add New Category
@@ -252,7 +346,7 @@ export default function AdminDashboard() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-2">
-                                                <button onClick={() => { setCurrentProduct(p); setVariants(p.variants || []); setShowModal(true); }} className="p-2 text-slate-400 hover:text-primary-600 transition-colors"><Edit size={16} /></button>
+                                                <button onClick={() => openProductModal(p)} className="p-2 text-slate-400 hover:text-primary-600 transition-colors"><Edit size={16} /></button>
                                                 <button onClick={() => handleDelete(p.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
                                             </div>
                                         </td>
@@ -281,7 +375,7 @@ export default function AdminDashboard() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-2">
-                                                <button onClick={() => { setCurrentCategory(cat); setShowCategoryModal(true); }} className="p-2 text-slate-400 hover:text-primary-600 transition-colors"><Edit size={16} /></button>
+                                                <button onClick={() => openCategoryModal(cat)} className="p-2 text-slate-400 hover:text-primary-600 transition-colors"><Edit size={16} /></button>
                                                 <button onClick={() => handleDeleteCategory(cat.id)} className="p-2 text-slate-400 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
                                             </div>
                                         </td>
@@ -331,43 +425,109 @@ export default function AdminDashboard() {
                                     <input name="stock" type="number" defaultValue={currentProduct?.stock} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 placeholder:text-slate-400" />
                                 </div>
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Main Image</label>
-                                    <div className="flex gap-4">
-                                        <div className="relative w-12 h-12 bg-slate-50 border rounded-xl overflow-hidden shrink-0">
-                                            {(imageFile || currentProduct?.image) && <Image src={imageFile ? URL.createObjectURL(imageFile) : currentProduct.image} alt="P" fill className="object-cover" />}
-                                        </div>
-                                        <label className="flex-1 px-4 py-3 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl flex items-center justify-center gap-2 text-slate-400 text-xs font-bold hover:bg-primary-50 cursor-pointer">
-                                            <Upload size={16} /> {imageFile ? "Change" : "Upload Image"}
-                                            <input type="file" accept="image/*" className="hidden" onChange={e => setImageFile(e.target.files?.[0] || null)} />
-                                        </label>
-                                    </div>
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Description</label>
+                                    <textarea name="description" defaultValue={currentProduct?.description} rows={2} className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 placeholder:text-slate-400 resize-none" />
                                 </div>
                             </div>
 
+                            {/* Multiple Product Images */}
+                            <div className="flex flex-col gap-3">
+                                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-2">
+                                    <ImagePlus size={14} /> Product Images (Multiple)
+                                </label>
+                                <div
+                                    ref={productImageRef}
+                                    className="flex flex-wrap gap-3 p-4 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl min-h-[100px]"
+                                    tabIndex={0}
+                                    onPaste={(e) => handleProductImagePaste(e.nativeEvent)}
+                                >
+                                    {productImages.map((img, idx) => (
+                                        <div key={idx} className="relative w-20 h-20 rounded-xl overflow-hidden border-2 border-white shadow-md group">
+                                            <Image src={getImageSrc(img)} alt={`Product ${idx + 1}`} fill className="object-cover" />
+                                            <button
+                                                type="button"
+                                                onClick={() => removeProductImage(idx)}
+                                                className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                            >
+                                                <X size={12} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    <label className="w-20 h-20 border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center text-slate-400 hover:bg-primary-50 hover:border-primary-300 cursor-pointer transition-all">
+                                        <Upload size={20} />
+                                        <span className="text-[10px] mt-1">Add</span>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            multiple
+                                            className="hidden"
+                                            onChange={e => {
+                                                const files = Array.from(e.target.files || []);
+                                                setProductImages(prev => [...prev, ...files]);
+                                            }}
+                                        />
+                                    </label>
+                                </div>
+                                <p className="text-[10px] text-slate-400 flex items-center gap-1">
+                                    <Clipboard size={10} /> Tip: Click the area above and paste (Ctrl+V) to add images from clipboard
+                                </p>
+                            </div>
+
+                            {/* Variants Section */}
                             <div>
                                 <div className="flex items-center justify-between mb-4">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Variants / Sizes</label>
-                                    <button type="button" onClick={() => setVariants([...variants, { id: Date.now().toString(), name: "", price: 0, mrp: 0, image: "", file: null }])} className="text-xs font-bold text-primary-500 flex items-center gap-1"><Plus size={14} /> Add Variant</button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setVariants([...variants, { id: Date.now().toString(), name: "", price: 0, mrp: 0, image: "", file: null }])}
+                                        className="text-xs font-bold text-primary-500 flex items-center gap-1"
+                                    >
+                                        <Plus size={14} /> Add Variant
+                                    </button>
                                 </div>
                                 <div className="flex flex-col gap-4">
                                     {variants.map((v, idx) => (
-                                        <div key={v.id || idx} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-                                            <div className="md:col-span-3 flex flex-col gap-1.5">
+                                        <div
+                                            key={v.id || idx}
+                                            className="p-4 bg-slate-50 rounded-2xl border border-slate-100 grid grid-cols-1 md:grid-cols-12 gap-4 items-end"
+                                            tabIndex={0}
+                                            onPaste={(e) => handleVariantImagePaste(e.nativeEvent, idx)}
+                                        >
+                                            <div className="md:col-span-2 flex flex-col gap-1.5">
                                                 <label className="text-[10px] font-bold text-slate-400 uppercase">Size</label>
-                                                <input value={v.name} placeholder="e.g. 100g" onChange={e => { const nv = [...variants]; nv[idx].name = e.target.value; setVariants(nv); }} className="px-3 py-2 bg-white border border-slate-100 rounded-xl text-xs text-slate-900 placeholder:text-slate-400" />
+                                                <input
+                                                    value={v.name}
+                                                    placeholder="e.g. 100g"
+                                                    onChange={e => { const nv = [...variants]; nv[idx].name = e.target.value; setVariants(nv); }}
+                                                    className="px-3 py-2 bg-white border border-slate-100 rounded-xl text-xs text-slate-900 placeholder:text-slate-400"
+                                                />
                                             </div>
                                             <div className="md:col-span-2 flex flex-col gap-1.5">
-                                                <label className="text-[10px] font-bold text-slate-400 uppercase">Price</label>
-                                                <input type="number" value={v.price} onChange={e => { const nv = [...variants]; nv[idx].price = parseFloat(e.target.value); setVariants(nv); }} className="px-3 py-2 bg-white border border-slate-100 rounded-xl text-xs text-slate-900 placeholder:text-slate-400" />
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase">MRP (₹)</label>
+                                                <input
+                                                    type="number"
+                                                    value={v.mrp || 0}
+                                                    onChange={e => { const nv = [...variants]; nv[idx].mrp = parseFloat(e.target.value) || 0; setVariants(nv); }}
+                                                    className="px-3 py-2 bg-white border border-slate-100 rounded-xl text-xs text-slate-900 placeholder:text-slate-400"
+                                                />
                                             </div>
-                                            <div className="md:col-span-3 flex flex-col gap-1.5">
-                                                <label className="text-[10px] font-bold text-slate-400 uppercase">Photo</label>
+                                            <div className="md:col-span-2 flex flex-col gap-1.5">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase">Price (₹)</label>
+                                                <input
+                                                    type="number"
+                                                    value={v.price}
+                                                    onChange={e => { const nv = [...variants]; nv[idx].price = parseFloat(e.target.value) || 0; setVariants(nv); }}
+                                                    className="px-3 py-2 bg-white border border-slate-100 rounded-xl text-xs text-slate-900 placeholder:text-slate-400"
+                                                />
+                                            </div>
+                                            <div className="md:col-span-4 flex flex-col gap-1.5">
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase">Photo (paste or upload)</label>
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-8 h-8 rounded-lg bg-white border shrink-0 relative overflow-hidden">
+                                                    <div className="w-10 h-10 rounded-lg bg-white border shrink-0 relative overflow-hidden">
                                                         {(v.file || v.image) && <Image src={v.file ? URL.createObjectURL(v.file) : v.image} alt="V" fill className="object-cover" />}
                                                     </div>
-                                                    <label className="flex-1 px-3 py-2 bg-white border border-dashed rounded-xl text-[10px] font-bold text-slate-400 flex items-center justify-center cursor-pointer">
-                                                        <Upload size={12} className="mr-1" /> {v.file ? "✓" : "Up"}
+                                                    <label className="flex-1 px-3 py-2 bg-white border border-dashed rounded-xl text-[10px] font-bold text-slate-400 flex items-center justify-center cursor-pointer hover:bg-primary-50">
+                                                        <Upload size={12} className="mr-1" /> {v.file ? "✓ Done" : "Upload"}
                                                         <input type="file" accept="image/*" className="hidden" onChange={e => { const nv = [...variants]; nv[idx].file = e.target.files?.[0] || null; setVariants(nv); }} />
                                                     </label>
                                                 </div>
@@ -377,6 +537,9 @@ export default function AdminDashboard() {
                                             </div>
                                         </div>
                                     ))}
+                                    {variants.length === 0 && (
+                                        <p className="text-center text-slate-400 text-sm py-4">No variants added. Click "Add Variant" to create size/weight options.</p>
+                                    )}
                                 </div>
                             </div>
 
@@ -401,11 +564,43 @@ export default function AdminDashboard() {
                                 <input name="name" defaultValue={currentCategory?.name} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl min-h-[48px] text-slate-900 placeholder:text-slate-400" />
                             </div>
                             <div className="flex flex-col gap-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Image File</label>
-                                <label className="w-full p-8 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-2 text-slate-400 font-bold hover:bg-primary-50 cursor-pointer">
-                                    <Upload size={24} /> <span>Upload Photo</span>
-                                    <input type="file" name="categoryImage" accept="image/*" className="hidden" />
-                                </label>
+                                <label className="text-xs font-bold text-slate-500 uppercase">Category Image</label>
+                                <div
+                                    ref={categoryImageRef}
+                                    className="w-full p-6 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-3 text-slate-400 font-bold hover:bg-primary-50 transition-colors"
+                                    tabIndex={0}
+                                    onPaste={(e) => handleCategoryImagePaste(e.nativeEvent)}
+                                >
+                                    {categoryImage ? (
+                                        <div className="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-white shadow-lg">
+                                            <Image src={getImageSrc(categoryImage)} alt="Category" fill className="object-cover" />
+                                            <button
+                                                type="button"
+                                                onClick={() => setCategoryImage(null)}
+                                                className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full"
+                                            >
+                                                <X size={12} />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <Upload size={24} />
+                                            <span className="text-sm">Click to upload or paste image</span>
+                                        </>
+                                    )}
+                                    <label className="px-4 py-2 bg-primary-500 text-white text-xs font-bold rounded-xl cursor-pointer hover:bg-primary-600 transition-colors">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={e => setCategoryImage(e.target.files?.[0] || null)}
+                                        />
+                                        {categoryImage ? "Change Image" : "Browse Files"}
+                                    </label>
+                                </div>
+                                <p className="text-[10px] text-slate-400 flex items-center gap-1">
+                                    <Clipboard size={10} /> Tip: Click the area above and paste (Ctrl+V) to add from clipboard
+                                </p>
                             </div>
                             <button type="submit" disabled={isSaving} className="w-full py-5 bg-primary-500 text-white rounded-[2rem] font-bold shadow-xl shadow-primary-200 hover:bg-primary-600 transition-all min-h-[56px]">
                                 {isSaving ? <Loader2 className="animate-spin" /> : currentCategory ? "Update Category" : "Save Category"}
