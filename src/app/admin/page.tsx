@@ -4,10 +4,11 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import {
     LayoutDashboard, Package, Users, BarChart3, Plus, Search,
-    MoreVertical, Edit, Trash2, X, Loader2, Upload, Sparkles, Check, Clipboard, ImagePlus
+    MoreVertical, Edit, Trash2, X, Loader2, Upload, Sparkles, Check, Clipboard, ImagePlus, Crop
 } from "lucide-react";
 import Image from "next/image";
 import AdminLogin from "@/components/admin/AdminLogin";
+import ImageCropper from "@/components/admin/ImageCropper";
 
 export default function AdminDashboard() {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -26,6 +27,11 @@ export default function AdminDashboard() {
     const [productImages, setProductImages] = useState<(File | string)[]>([]);
     const [categoryImage, setCategoryImage] = useState<File | string | null>(null);
 
+    // Cropping state
+    const [cropperImage, setCropperImage] = useState<string | null>(null);
+    const [cropperCallback, setCropperCallback] = useState<((file: File) => void) | null>(null);
+    const [cropperAspectRatio, setCropperAspectRatio] = useState(1);
+
     // Refs for paste functionality
     const productImageRef = useRef<HTMLDivElement>(null);
     const categoryImageRef = useRef<HTMLDivElement>(null);
@@ -36,6 +42,29 @@ export default function AdminDashboard() {
         fetchCategories();
     }, []);
 
+    // Open cropper for a new image
+    const openCropper = (file: File, callback: (croppedFile: File) => void, aspectRatio: number = 1) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            setCropperImage(reader.result as string);
+            setCropperCallback(() => callback);
+            setCropperAspectRatio(aspectRatio);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const closeCropper = () => {
+        setCropperImage(null);
+        setCropperCallback(null);
+    };
+
+    const handleCropComplete = (croppedFile: File) => {
+        if (cropperCallback) {
+            cropperCallback(croppedFile);
+        }
+        closeCropper();
+    };
+
     // Handle paste for product images
     const handleProductImagePaste = useCallback((e: ClipboardEvent) => {
         const items = e.clipboardData?.items;
@@ -45,7 +74,9 @@ export default function AdminDashboard() {
             if (items[i].type.indexOf('image') !== -1) {
                 const file = items[i].getAsFile();
                 if (file) {
-                    setProductImages(prev => [...prev, file]);
+                    openCropper(file, (croppedFile) => {
+                        setProductImages(prev => [...prev, croppedFile]);
+                    }, 1);
                     e.preventDefault();
                     break;
                 }
@@ -62,7 +93,9 @@ export default function AdminDashboard() {
             if (items[i].type.indexOf('image') !== -1) {
                 const file = items[i].getAsFile();
                 if (file) {
-                    setCategoryImage(file);
+                    openCropper(file, (croppedFile) => {
+                        setCategoryImage(croppedFile);
+                    }, 1);
                     e.preventDefault();
                     break;
                 }
@@ -70,24 +103,51 @@ export default function AdminDashboard() {
         }
     }, []);
 
-    // Handle paste for variant images
-    const handleVariantImagePaste = useCallback((e: ClipboardEvent, idx: number) => {
-        const items = e.clipboardData?.items;
-        if (!items) return;
-
-        for (let i = 0; i < items.length; i++) {
-            if (items[i].type.indexOf('image') !== -1) {
-                const file = items[i].getAsFile();
-                if (file) {
-                    const nv = [...variants];
-                    nv[idx].file = file;
-                    setVariants(nv);
-                    e.preventDefault();
-                    break;
-                }
-            }
+    // Handle file input for product images (with crop)
+    const handleProductImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length > 0) {
+            // Process files one by one through cropper
+            processFilesQueue([...files]);
         }
-    }, [variants]);
+    };
+
+    const processFilesQueue = (files: File[]) => {
+        if (files.length === 0) return;
+
+        const file = files[0];
+        const remaining = files.slice(1);
+
+        openCropper(file, (croppedFile) => {
+            setProductImages(prev => [...prev, croppedFile]);
+            // Process next file after cropping
+            if (remaining.length > 0) {
+                setTimeout(() => processFilesQueue(remaining), 100);
+            }
+        }, 1);
+    };
+
+    // Handle file input for category image (with crop)
+    const handleCategoryImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            openCropper(file, (croppedFile) => {
+                setCategoryImage(croppedFile);
+            }, 1);
+        }
+    };
+
+    // Handle variant image select (with crop)
+    const handleVariantImageSelect = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            openCropper(file, (croppedFile) => {
+                const nv = [...variants];
+                nv[idx].file = croppedFile;
+                setVariants(nv);
+            }, 1);
+        }
+    };
 
     const fetchCategories = async () => {
         const { data, error } = await supabase
@@ -263,6 +323,16 @@ export default function AdminDashboard() {
 
     return (
         <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
+            {/* Image Cropper Modal */}
+            {cropperImage && (
+                <ImageCropper
+                    imageSrc={cropperImage}
+                    onCropComplete={handleCropComplete}
+                    onCancel={closeCropper}
+                    aspectRatio={cropperAspectRatio}
+                />
+            )}
+
             {/* Sidebar (Mobile optimized) */}
             <aside className="hidden md:flex flex-col w-72 bg-white border-r border-slate-100 p-8">
                 <div className="flex items-center gap-3 mb-12">
@@ -430,10 +500,10 @@ export default function AdminDashboard() {
                                 </div>
                             </div>
 
-                            {/* Multiple Product Images */}
+                            {/* Multiple Product Images with Crop */}
                             <div className="flex flex-col gap-3">
                                 <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-2">
-                                    <ImagePlus size={14} /> Product Images (Multiple)
+                                    <Crop size={14} /> Product Images (Crop before upload)
                                 </label>
                                 <div
                                     ref={productImageRef}
@@ -461,15 +531,12 @@ export default function AdminDashboard() {
                                             accept="image/*"
                                             multiple
                                             className="hidden"
-                                            onChange={e => {
-                                                const files = Array.from(e.target.files || []);
-                                                setProductImages(prev => [...prev, ...files]);
-                                            }}
+                                            onChange={handleProductImageSelect}
                                         />
                                     </label>
                                 </div>
                                 <p className="text-[10px] text-slate-400 flex items-center gap-1">
-                                    <Clipboard size={10} /> Tip: Click the area above and paste (Ctrl+V) to add images from clipboard
+                                    <Clipboard size={10} /> Tip: Paste (Ctrl+V) images from clipboard. Each image will open in cropper.
                                 </p>
                             </div>
 
@@ -490,8 +557,6 @@ export default function AdminDashboard() {
                                         <div
                                             key={v.id || idx}
                                             className="p-4 bg-slate-50 rounded-2xl border border-slate-100 grid grid-cols-1 md:grid-cols-12 gap-4 items-end"
-                                            tabIndex={0}
-                                            onPaste={(e) => handleVariantImagePaste(e.nativeEvent, idx)}
                                         >
                                             <div className="md:col-span-2 flex flex-col gap-1.5">
                                                 <label className="text-[10px] font-bold text-slate-400 uppercase">Size</label>
@@ -521,14 +586,19 @@ export default function AdminDashboard() {
                                                 />
                                             </div>
                                             <div className="md:col-span-4 flex flex-col gap-1.5">
-                                                <label className="text-[10px] font-bold text-slate-400 uppercase">Photo (paste or upload)</label>
+                                                <label className="text-[10px] font-bold text-slate-400 uppercase">Photo (with crop)</label>
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-10 h-10 rounded-lg bg-white border shrink-0 relative overflow-hidden">
                                                         {(v.file || v.image) && <Image src={v.file ? URL.createObjectURL(v.file) : v.image} alt="V" fill className="object-cover" />}
                                                     </div>
                                                     <label className="flex-1 px-3 py-2 bg-white border border-dashed rounded-xl text-[10px] font-bold text-slate-400 flex items-center justify-center cursor-pointer hover:bg-primary-50">
-                                                        <Upload size={12} className="mr-1" /> {v.file ? "✓ Done" : "Upload"}
-                                                        <input type="file" accept="image/*" className="hidden" onChange={e => { const nv = [...variants]; nv[idx].file = e.target.files?.[0] || null; setVariants(nv); }} />
+                                                        <Crop size={12} className="mr-1" /> {v.file ? "✓ Done" : "Upload & Crop"}
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            className="hidden"
+                                                            onChange={(e) => handleVariantImageSelect(e, idx)}
+                                                        />
                                                     </label>
                                                 </div>
                                             </div>
@@ -564,7 +634,9 @@ export default function AdminDashboard() {
                                 <input name="name" defaultValue={currentCategory?.name} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl min-h-[48px] text-slate-900 placeholder:text-slate-400" />
                             </div>
                             <div className="flex flex-col gap-2">
-                                <label className="text-xs font-bold text-slate-500 uppercase">Category Image</label>
+                                <label className="text-xs font-bold text-slate-500 uppercase flex items-center gap-2">
+                                    <Crop size={14} /> Category Image (with crop)
+                                </label>
                                 <div
                                     ref={categoryImageRef}
                                     className="w-full p-6 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-3 text-slate-400 font-bold hover:bg-primary-50 transition-colors"
@@ -588,18 +660,19 @@ export default function AdminDashboard() {
                                             <span className="text-sm">Click to upload or paste image</span>
                                         </>
                                     )}
-                                    <label className="px-4 py-2 bg-primary-500 text-white text-xs font-bold rounded-xl cursor-pointer hover:bg-primary-600 transition-colors">
+                                    <label className="px-4 py-2 bg-primary-500 text-white text-xs font-bold rounded-xl cursor-pointer hover:bg-primary-600 transition-colors flex items-center gap-2">
+                                        <Crop size={14} />
                                         <input
                                             type="file"
                                             accept="image/*"
                                             className="hidden"
-                                            onChange={e => setCategoryImage(e.target.files?.[0] || null)}
+                                            onChange={handleCategoryImageSelect}
                                         />
-                                        {categoryImage ? "Change Image" : "Browse Files"}
+                                        {categoryImage ? "Change Image" : "Browse & Crop"}
                                     </label>
                                 </div>
                                 <p className="text-[10px] text-slate-400 flex items-center gap-1">
-                                    <Clipboard size={10} /> Tip: Click the area above and paste (Ctrl+V) to add from clipboard
+                                    <Clipboard size={10} /> Tip: Paste (Ctrl+V) to add from clipboard with crop
                                 </p>
                             </div>
                             <button type="submit" disabled={isSaving} className="w-full py-5 bg-primary-500 text-white rounded-[2rem] font-bold shadow-xl shadow-primary-200 hover:bg-primary-600 transition-all min-h-[56px]">

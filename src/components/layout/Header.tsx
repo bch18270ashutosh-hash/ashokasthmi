@@ -1,13 +1,143 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
-import { ShoppingCart, Search, Menu, X, Phone } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { ShoppingCart, Search, Menu, X, Phone, Loader2 } from "lucide-react";
+
+interface Product {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    category: string;
+}
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [suggestions, setSuggestions] = useState<Product[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
+    const [showSuggestions, setShowSuggestions] = useState(false);
     const { cartCount } = useCart();
+    const router = useRouter();
+    const searchRef = useRef<HTMLDivElement>(null);
+    const mobileSearchRef = useRef<HTMLDivElement>(null);
+
+    // Debounced search function
+    const searchProducts = useCallback(async (query: string) => {
+        if (query.length < 2) {
+            setSuggestions([]);
+            return;
+        }
+
+        setIsSearching(true);
+        try {
+            const { data, error } = await supabase
+                .from("products")
+                .select("id, name, image, price, category")
+                .ilike("name", `%${query}%`)
+                .limit(6);
+
+            if (!error && data) {
+                setSuggestions(data);
+            }
+        } catch (err) {
+            console.error("Search error:", err);
+        }
+        setIsSearching(false);
+    }, []);
+
+    // Debounce effect
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            searchProducts(searchQuery);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery, searchProducts]);
+
+    // Click outside to close suggestions
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (searchRef.current && !searchRef.current.contains(e.target as Node) &&
+                mobileSearchRef.current && !mobileSearchRef.current.contains(e.target as Node)) {
+                setShowSuggestions(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+            setShowSuggestions(false);
+            setSearchQuery("");
+            setIsMenuOpen(false);
+        }
+    };
+
+    const handleSuggestionClick = (productId: string) => {
+        router.push(`/product/${productId}`);
+        setShowSuggestions(false);
+        setSearchQuery("");
+        setIsMenuOpen(false);
+    };
+
+    const SuggestionDropdown = () => (
+        showSuggestions && (searchQuery.length >= 2) && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50 max-h-[400px] overflow-y-auto">
+                {isSearching ? (
+                    <div className="p-4 flex items-center justify-center text-slate-400">
+                        <Loader2 size={20} className="animate-spin mr-2" />
+                        Searching...
+                    </div>
+                ) : suggestions.length > 0 ? (
+                    <div className="divide-y divide-slate-50">
+                        {suggestions.map((product) => (
+                            <button
+                                key={product.id}
+                                onClick={() => handleSuggestionClick(product.id)}
+                                className="w-full p-3 flex items-center gap-3 hover:bg-primary-50 transition-colors text-left"
+                            >
+                                <div className="relative w-12 h-12 rounded-xl bg-slate-50 overflow-hidden border border-slate-100 shrink-0">
+                                    <Image
+                                        src={product.image || "/placeholder.jpg"}
+                                        alt={product.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-semibold text-slate-800 truncate">{product.name}</p>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs text-slate-400">{product.category}</span>
+                                        <span className="text-xs font-bold text-primary-600">₹{product.price}</span>
+                                    </div>
+                                </div>
+                            </button>
+                        ))}
+                        <button
+                            onClick={handleSearchSubmit as any}
+                            className="w-full p-3 text-center text-sm font-bold text-primary-600 hover:bg-primary-50 transition-colors"
+                        >
+                            View all results for "{searchQuery}"
+                        </button>
+                    </div>
+                ) : (
+                    <div className="p-4 text-center text-slate-400 text-sm">
+                        No products found for "{searchQuery}"
+                    </div>
+                )}
+            </div>
+        )
+    );
 
     return (
         <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-primary-100">
@@ -37,13 +167,20 @@ export default function Header() {
                 </nav>
 
                 {/* Search Bar (Desktop) */}
-                <div className="hidden md:flex items-center flex-1 max-w-sm px-4 py-2 bg-primary-50 rounded-full border border-primary-100 group">
-                    <Search size={18} className="text-primary-400 group-focus-within:text-primary-600 transition-colors" />
-                    <input
-                        type="text"
-                        placeholder="Search puja items..."
-                        className="flex-1 bg-transparent border-none outline-none px-2 text-sm text-slate-900 placeholder:text-slate-400"
-                    />
+                <div ref={searchRef} className="hidden md:block relative flex-1 max-w-sm">
+                    <form onSubmit={handleSearchSubmit} className="flex items-center px-4 py-2 bg-primary-50 rounded-full border border-primary-100 group">
+                        <Search size={18} className="text-primary-400 group-focus-within:text-primary-600 transition-colors" />
+                        <input
+                            type="text"
+                            placeholder="Search puja items..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onFocus={() => setShowSuggestions(true)}
+                            className="flex-1 bg-transparent border-none outline-none px-2 text-sm text-slate-900 placeholder:text-slate-400"
+                        />
+                        {isSearching && <Loader2 size={16} className="animate-spin text-primary-400" />}
+                    </form>
+                    <SuggestionDropdown />
                 </div>
 
                 {/* Action Icons */}
@@ -69,14 +206,21 @@ export default function Header() {
             {/* Mobile Menu */}
             {isMenuOpen && (
                 <div className="lg:hidden bg-white border-t border-primary-50 px-4 py-6 flex flex-col gap-4 animate-in slide-in-from-top duration-300">
-                    {/* Mobile Search */}
-                    <div className="flex items-center px-4 py-2 bg-primary-50 rounded-lg border border-primary-100">
-                        <Search size={18} className="text-primary-400" />
-                        <input
-                            type="text"
-                            placeholder="Search items..."
-                            className="flex-1 bg-transparent border-none outline-none px-2 text-sm text-slate-900 placeholder:text-slate-400"
-                        />
+                    {/* Mobile Search with Suggestions */}
+                    <div ref={mobileSearchRef} className="relative">
+                        <form onSubmit={handleSearchSubmit} className="flex items-center px-4 py-2 bg-primary-50 rounded-lg border border-primary-100">
+                            <Search size={18} className="text-primary-400" />
+                            <input
+                                type="text"
+                                placeholder="Search items..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onFocus={() => setShowSuggestions(true)}
+                                className="flex-1 bg-transparent border-none outline-none px-2 text-sm text-slate-900 placeholder:text-slate-400"
+                            />
+                            {isSearching && <Loader2 size={16} className="animate-spin text-primary-400" />}
+                        </form>
+                        <SuggestionDropdown />
                     </div>
                     <Link href="/" className="text-lg font-medium py-2" onClick={() => setIsMenuOpen(false)}>Home</Link>
                     <Link href="/shop" className="text-lg font-medium py-2" onClick={() => setIsMenuOpen(false)}>Shop</Link>
