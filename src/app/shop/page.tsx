@@ -80,7 +80,7 @@ function ShopContent() {
                                 placeholder="Find anything..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all text-sm"
+                                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                             />
                             <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
                         </div>
@@ -146,7 +146,7 @@ function ShopContent() {
                                 <select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value)}
-                                    className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 pr-10 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-primary-500/20 outline-none cursor-pointer"
+                                    className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 pr-10 text-sm font-medium text-slate-900 focus:ring-2 focus:ring-primary-500/20 outline-none cursor-pointer"
                                 >
                                     <option value="newest">Newest First</option>
                                     <option value="price-low">Price: Low to High</option>

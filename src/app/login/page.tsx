@@ -44,7 +44,7 @@ export default function LoginPage() {
                                 <input
                                     type="text"
                                     placeholder="Full Name"
-                                    className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm"
+                                    className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                                 />
                                 <User className="absolute left-4 top-3.5 text-slate-400" size={20} />
                             </div>
@@ -54,7 +54,7 @@ export default function LoginPage() {
                             <input
                                 type="email"
                                 placeholder="Email Address"
-                                className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm"
+                                className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                             />
                             <Mail className="absolute left-4 top-3.5 text-slate-400" size={20} />
                         </div>
@@ -63,7 +63,7 @@ export default function LoginPage() {
                             <input
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Password"
-                                className="w-full pl-12 pr-12 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm"
+                                className="w-full pl-12 pr-12 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                             />
                             <Lock className="absolute left-4 top-3.5 text-slate-400" size={20} />
                             <button

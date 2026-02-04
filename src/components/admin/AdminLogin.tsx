@@ -51,7 +51,7 @@ export default function AdminLogin({ onLogin }: { onLogin: () => void }) {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all"
+                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all text-slate-900 placeholder:text-slate-400"
                                 placeholder="admin@ashokasthmi.in"
                                 required
                             />
@@ -66,7 +66,7 @@ export default function AdminLogin({ onLogin }: { onLogin: () => void }) {
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all"
+                                className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all text-slate-900 placeholder:text-slate-400"
                                 placeholder="••••••••"
                                 required
                             />

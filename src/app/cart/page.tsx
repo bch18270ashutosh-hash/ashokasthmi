@@ -142,7 +142,7 @@ export default function CartPage() {
                                     value={formData.name}
                                     onChange={handleInputChange}
                                     placeholder="e.g. Rahul Sharma"
-                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm"
+                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                                 />
                             </div>
                             <div className="flex flex-col gap-1.5">
@@ -153,7 +153,7 @@ export default function CartPage() {
                                     value={formData.phone}
                                     onChange={handleInputChange}
                                     placeholder="e.g. 9876543210"
-                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm"
+                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                                 />
                             </div>
                             <div className="flex flex-col gap-1.5">
@@ -164,7 +164,7 @@ export default function CartPage() {
                                     onChange={handleInputChange}
                                     rows={3}
                                     placeholder="House No., Street name, Landmark"
-                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm resize-none"
+                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm resize-none text-slate-900 placeholder:text-slate-400"
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -176,7 +176,7 @@ export default function CartPage() {
                                         value={formData.city}
                                         onChange={handleInputChange}
                                         placeholder="Varanasi"
-                                        className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm"
+                                        className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                                     />
                                 </div>
                                 <div className="flex flex-col gap-1.5">
@@ -187,7 +187,7 @@ export default function CartPage() {
                                         value={formData.pincode}
                                         onChange={handleInputChange}
                                         placeholder="221001"
-                                        className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm"
+                                        className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-sm text-slate-900 placeholder:text-slate-400"
                                     />
                                 </div>
                             </div>

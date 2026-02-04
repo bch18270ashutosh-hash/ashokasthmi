@@ -78,7 +78,7 @@ export default function ContactPage() {
                                 <input
                                     type="text"
                                     placeholder="Enter your name"
-                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all"
+                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-slate-900 placeholder:text-slate-400"
                                 />
                             </div>
                             <div className="flex flex-col gap-2">
@@ -86,7 +86,7 @@ export default function ContactPage() {
                                 <input
                                     type="email"
                                     placeholder="name@example.com"
-                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all"
+                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all text-slate-900 placeholder:text-slate-400"
                                 />
                             </div>
                             <div className="flex flex-col gap-2">
@@ -94,7 +94,7 @@ export default function ContactPage() {
                                 <textarea
                                     rows={4}
                                     placeholder="How can we help you?"
-                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all resize-none"
+                                    className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-100 focus:border-primary-500 outline-none transition-all resize-none text-slate-900 placeholder:text-slate-400"
                                 />
                             </div>
                             <button

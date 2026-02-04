@@ -42,7 +42,7 @@ export default function Header() {
                     <input
                         type="text"
                         placeholder="Search puja items..."
-                        className="flex-1 bg-transparent border-none outline-none px-2 text-sm text-slate-700"
+                        className="flex-1 bg-transparent border-none outline-none px-2 text-sm text-slate-900 placeholder:text-slate-400"
                     />
                 </div>
 
@@ -75,7 +75,7 @@ export default function Header() {
                         <input
                             type="text"
                             placeholder="Search items..."
-                            className="flex-1 bg-transparent border-none outline-none px-2 text-sm"
+                            className="flex-1 bg-transparent border-none outline-none px-2 text-sm text-slate-900 placeholder:text-slate-400"
                         />
                     </div>
                     <Link href="/" className="text-lg font-medium py-2" onClick={() => setIsMenuOpen(false)}>Home</Link>

@@ -58,8 +58,46 @@
   button,
   a,
   input,
+  select,
+  textarea {
+    @apply min-h-[48px] md:min-h-[unset];
+  }
+
+  /* Form Input Styling - Ensure text is always visible */
+  input,
+  textarea,
   select {
-    @apply min-h-[44px] md:min-h-[unset];
+    @apply text-slate-900;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-slate-400;
+    color: #94a3b8 !important;
+    -webkit-text-fill-color: #94a3b8 !important;
+    opacity: 1;
+  }
+
+  /* Mobile-first form enhancements */
+  @media (max-width: 768px) {
+
+    input,
+    textarea,
+    select {
+      @apply text-base;
+      font-size: 16px !important;
+      /* Prevents iOS zoom on focus */
+    }
+
+    button,
+    a,
+    input,
+    select,
+    textarea {
+      @apply min-h-[48px];
+    }
   }
 }
 

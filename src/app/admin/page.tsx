@@ -309,26 +309,26 @@ export default function AdminDashboard() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="flex flex-col gap-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Product Name</label>
-                                    <input name="name" defaultValue={currentProduct?.name} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-primary-100 min-h-[48px]" />
+                                    <input name="name" defaultValue={currentProduct?.name} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-primary-100 min-h-[48px] text-slate-900 placeholder:text-slate-400" />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Category</label>
-                                    <select name="category" defaultValue={currentProduct?.category} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl min-h-[48px]">
+                                    <select name="category" defaultValue={currentProduct?.category} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl min-h-[48px] text-slate-900">
                                         <option value="">Select Category</option>
                                         {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                                     </select>
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">MRP (₹)</label>
-                                    <input name="mrp" type="number" defaultValue={currentProduct?.mrp} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl" />
+                                    <input name="mrp" type="number" defaultValue={currentProduct?.mrp} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 placeholder:text-slate-400" />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Selling Price (₹)</label>
-                                    <input name="price" type="number" defaultValue={currentProduct?.price} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl" />
+                                    <input name="price" type="number" defaultValue={currentProduct?.price} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 placeholder:text-slate-400" />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Stock</label>
-                                    <input name="stock" type="number" defaultValue={currentProduct?.stock} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl" />
+                                    <input name="stock" type="number" defaultValue={currentProduct?.stock} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl text-slate-900 placeholder:text-slate-400" />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Main Image</label>
@@ -354,11 +354,11 @@ export default function AdminDashboard() {
                                         <div key={v.id || idx} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                                             <div className="md:col-span-3 flex flex-col gap-1.5">
                                                 <label className="text-[10px] font-bold text-slate-400 uppercase">Size</label>
-                                                <input value={v.name} placeholder="e.g. 100g" onChange={e => { const nv = [...variants]; nv[idx].name = e.target.value; setVariants(nv); }} className="px-3 py-2 bg-white border border-slate-100 rounded-xl text-xs" />
+                                                <input value={v.name} placeholder="e.g. 100g" onChange={e => { const nv = [...variants]; nv[idx].name = e.target.value; setVariants(nv); }} className="px-3 py-2 bg-white border border-slate-100 rounded-xl text-xs text-slate-900 placeholder:text-slate-400" />
                                             </div>
                                             <div className="md:col-span-2 flex flex-col gap-1.5">
                                                 <label className="text-[10px] font-bold text-slate-400 uppercase">Price</label>
-                                                <input type="number" value={v.price} onChange={e => { const nv = [...variants]; nv[idx].price = parseFloat(e.target.value); setVariants(nv); }} className="px-3 py-2 bg-white border border-slate-100 rounded-xl text-xs" />
+                                                <input type="number" value={v.price} onChange={e => { const nv = [...variants]; nv[idx].price = parseFloat(e.target.value); setVariants(nv); }} className="px-3 py-2 bg-white border border-slate-100 rounded-xl text-xs text-slate-900 placeholder:text-slate-400" />
                                             </div>
                                             <div className="md:col-span-3 flex flex-col gap-1.5">
                                                 <label className="text-[10px] font-bold text-slate-400 uppercase">Photo</label>
@@ -398,7 +398,7 @@ export default function AdminDashboard() {
                         <form onSubmit={handleSaveCategory} className="flex flex-col gap-6">
                             <div className="flex flex-col gap-2">
                                 <label className="text-xs font-bold text-slate-500 uppercase">Category Name</label>
-                                <input name="name" defaultValue={currentCategory?.name} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl min-h-[48px]" />
+                                <input name="name" defaultValue={currentCategory?.name} required className="px-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl min-h-[48px] text-slate-900 placeholder:text-slate-400" />
                             </div>
                             <div className="flex flex-col gap-2">
                                 <label className="text-xs font-bold text-slate-500 uppercase">Image File</label>
